@@ -567,6 +567,147 @@
       input.answer:disabled {
         opacity: 0.85;
       }
+      .keyboard {
+        margin-top: 14px;
+        display: grid;
+        gap: 6px;
+        user-select: none;
+        -webkit-user-select: none;
+      }
+      .kb-row {
+        display: flex;
+        gap: 6px;
+        justify-content: center;
+      }
+      .kb-key {
+        flex: 1 1 0;
+        min-width: 0;
+        height: 42px;
+        padding: 0;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        background: var(--card);
+        color: var(--text);
+        font-family: inherit;
+        font-size: 15px;
+        font-weight: 600;
+        line-height: 1;
+        cursor: pointer;
+        box-shadow: 0 1px 0 var(--line);
+        touch-action: manipulation;
+        transition:
+          background 0.12s ease,
+          transform 0.06s ease;
+      }
+      .kb-key:hover {
+        background: var(--primary-weak);
+      }
+      .kb-key:active {
+        transform: translateY(1px);
+        background: var(--primary-weak);
+      }
+      .kb-key:disabled {
+        opacity: 0.45;
+        cursor: default;
+        transform: none;
+      }
+      .kb-key.kb-fn {
+        background: var(--bg);
+        font-size: 13px;
+      }
+      .kb-key.kb-space {
+        flex: 3 1 0;
+        font-size: 13px;
+        letter-spacing: 0.08em;
+      }
+      .kb-key.kb-enter {
+        flex: 1.4 1 0;
+        max-width: 120px;
+        background: var(--primary-weak);
+        color: var(--primary);
+        font-weight: 700;
+      }
+      @media (max-width: 520px) {
+        .keyboard {
+          gap: 5px;
+        }
+        .kb-row {
+          gap: 4px;
+        }
+        .kb-key {
+          height: 40px;
+          font-size: 14px;
+        }
+      }
+      .letter-boxes {
+        margin-top: 18px;
+        min-height: 48px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 10px 16px;
+      }
+      .letter-word {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 5px;
+      }
+      .letter-box {
+        width: clamp(26px, 6.2vw, 36px);
+        height: 46px;
+        padding: 0;
+        border: 2px solid var(--line);
+        border-radius: 9px;
+        background: var(--bg);
+        color: var(--text);
+        font-family: inherit;
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 1;
+        text-align: center;
+        text-transform: lowercase;
+        caret-color: transparent;
+      }
+      .letter-box:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-weak);
+      }
+      .letter-box.fill {
+        border-color: var(--primary);
+      }
+      .letter-box:disabled {
+        opacity: 0.9;
+      }
+      .letter-fixed {
+        align-self: center;
+        min-width: 9px;
+        color: var(--muted);
+        font-size: 20px;
+        font-weight: 700;
+        text-align: center;
+      }
+      .letter-boxes.bad .letter-box {
+        border-color: var(--bad);
+      }
+      .letter-boxes.bad .letter-fixed {
+        color: var(--bad);
+      }
+      @media (max-width: 520px) {
+        .letter-boxes {
+          gap: 8px 12px;
+        }
+        .letter-box {
+          width: clamp(25px, 6.4vw, 32px);
+          height: 42px;
+          font-size: 18px;
+        }
+        .letter-fixed {
+          font-size: 18px;
+        }
+      }
       .feedback {
         margin-top: 16px;
         padding: 12px 14px;
@@ -1194,9 +1335,70 @@
             autocapitalize="off"
             autocorrect="off"
             spellcheck="false"
-            placeholder="在这里输入英文"
+            inputmode="none"
+            readonly
+            maxlength="60"
+            placeholder="用下方键盘输入"
             aria-label="英文答案"
           />
+          <div
+            class="letter-boxes"
+            id="letterBoxes"
+            role="group"
+            aria-label="英文答案，每个字母一个格子"
+          ></div>
+          <div class="keyboard" id="keyboard" role="group" aria-label="内置英文键盘">
+            <div class="kb-row">
+              <button type="button" class="kb-key" data-char="q">q</button>
+              <button type="button" class="kb-key" data-char="w">w</button>
+              <button type="button" class="kb-key" data-char="e">e</button>
+              <button type="button" class="kb-key" data-char="r">r</button>
+              <button type="button" class="kb-key" data-char="t">t</button>
+              <button type="button" class="kb-key" data-char="y">y</button>
+              <button type="button" class="kb-key" data-char="u">u</button>
+              <button type="button" class="kb-key" data-char="i">i</button>
+              <button type="button" class="kb-key" data-char="o">o</button>
+              <button type="button" class="kb-key" data-char="p">p</button>
+            </div>
+            <div class="kb-row">
+              <button type="button" class="kb-key" data-char="a">a</button>
+              <button type="button" class="kb-key" data-char="s">s</button>
+              <button type="button" class="kb-key" data-char="d">d</button>
+              <button type="button" class="kb-key" data-char="f">f</button>
+              <button type="button" class="kb-key" data-char="g">g</button>
+              <button type="button" class="kb-key" data-char="h">h</button>
+              <button type="button" class="kb-key" data-char="j">j</button>
+              <button type="button" class="kb-key" data-char="k">k</button>
+              <button type="button" class="kb-key" data-char="l">l</button>
+            </div>
+            <div class="kb-row">
+              <button type="button" class="kb-key" data-char="z">z</button>
+              <button type="button" class="kb-key" data-char="x">x</button>
+              <button type="button" class="kb-key" data-char="c">c</button>
+              <button type="button" class="kb-key" data-char="v">v</button>
+              <button type="button" class="kb-key" data-char="b">b</button>
+              <button type="button" class="kb-key" data-char="n">n</button>
+              <button type="button" class="kb-key" data-char="m">m</button>
+              <button
+                type="button"
+                class="kb-key kb-fn"
+                id="kbBackspace"
+                aria-label="退格"
+              >
+                ⌫
+              </button>
+            </div>
+            <div class="kb-row">
+              <button type="button" class="kb-key kb-fn" id="kbApos" data-char="'">'</button>
+              <button type="button" class="kb-key kb-fn" id="kbHyphen" data-char="-">-</button>
+              <button type="button" class="kb-key kb-space" id="kbSpace" data-char=" ">
+                空格
+              </button>
+              <button type="button" class="kb-key kb-enter" id="kbEnter">
+                确认
+              </button>
+            </div>
+          </div>
           <div class="feedback" id="feedback" hidden></div>
           <div class="row actions">
             <button class="btn primary" id="btnSubmit" type="button">
@@ -1331,6 +1533,11 @@
         var selectedUnits = loadSelection();
         var setupTab = 'bank';
         var autoNextTimer = null;
+        var boxMode = false;
+        var answerBoxes = [];
+        var answerLetters = [];
+        var answerTokens = [];
+        var currentBox = 0;
 
         function $(id) {
           return document.getElementById(id);
@@ -1986,12 +2193,262 @@
           input.value = '';
           input.disabled = false;
           input.classList.remove('bad');
+          $('letterBoxes').classList.remove('bad', 'shake');
           $('feedback').hidden = true;
           $('feedback').className = 'feedback';
           $('feedback').textContent = '';
           $('btnSubmit').hidden = false;
           $('btnSkip').hidden = false;
           $('btnNext').hidden = true;
+          $('kbEnter').textContent = '确认';
+          setKeyboardEnabled(true);
+          renderAnswerField(item);
+        }
+
+        function setKeyboardEnabled(enabled) {
+          var keys = $('keyboard').querySelectorAll('.kb-key');
+          for (var i = 0; i < keys.length; i++) keys[i].disabled = !enabled;
+        }
+
+        function clearAnswerHint() {
+          var feedback = $('feedback');
+          if (!feedback.hidden && feedback.className.indexOf('hint') >= 0) {
+            feedback.hidden = true;
+            feedback.className = 'feedback';
+            feedback.textContent = '';
+          }
+          $('answerInput').classList.remove('bad');
+          $('letterBoxes').classList.remove('bad');
+        }
+
+        function buildAnswerLayout(item) {
+          var answers =
+            item && item.answers && item.answers.length
+              ? item.answers
+              : [item && item.en ? item.en : ''];
+          answers = answers.filter(function (a) {
+            return String(a).trim();
+          });
+          if (!answers.length) return null;
+
+          var counts = answers.map(function (a) {
+            return (String(a).match(/[A-Za-z]/g) || []).length;
+          });
+          var min = Math.min.apply(null, counts);
+          var max = Math.max.apply(null, counts);
+          if (!min || min !== max) return null;
+
+          var base = String(answers[0]);
+          var tokens = [];
+          var letterIndex = 0;
+          for (var i = 0; i < base.length; i++) {
+            var ch = base.charAt(i);
+            if (/[A-Za-z]/.test(ch)) {
+              tokens.push({ type: 'letter', index: letterIndex, value: '' });
+              letterIndex++;
+            } else if (/\s/.test(ch)) {
+              if (
+                tokens.length &&
+                tokens[tokens.length - 1].type !== 'gap'
+              ) {
+                tokens.push({ type: 'gap' });
+              }
+            } else {
+              tokens.push({ type: 'fixed', ch: ch });
+            }
+          }
+          while (tokens.length && tokens[0].type === 'gap') tokens.shift();
+          while (tokens.length && tokens[tokens.length - 1].type === 'gap') {
+            tokens.pop();
+          }
+          return letterIndex ? tokens : null;
+        }
+
+        function syncAnswerValue() {
+          if (!boxMode) return;
+          var value = '';
+          var filled = false;
+          for (var i = 0; i < answerTokens.length; i++) {
+            var token = answerTokens[i];
+            if (token.type === 'letter') {
+              var ch = answerLetters[token.index] || '';
+              if (ch) filled = true;
+              value += ch;
+            } else if (token.type === 'gap') {
+              value += ' ';
+            } else {
+              value += token.ch;
+            }
+          }
+          $('answerInput').value = filled ? value : '';
+        }
+
+        function focusAnswer() {
+          if (boxMode && answerBoxes.length) {
+            var index = Math.min(currentBox, answerBoxes.length - 1);
+            answerBoxes[index].focus({ preventScroll: true });
+          } else {
+            $('answerInput').focus({ preventScroll: true });
+          }
+        }
+
+        function renderAnswerField(item) {
+          var input = $('answerInput');
+          var boxes = $('letterBoxes');
+          var tokens = buildAnswerLayout(item);
+
+          boxMode = !!tokens;
+          input.hidden = boxMode;
+          boxes.hidden = !boxMode;
+          boxes.innerHTML = '';
+          boxes.classList.remove('bad', 'shake');
+          $('kbApos').hidden = boxMode;
+          $('kbHyphen').hidden = boxMode;
+          $('kbSpace').hidden = boxMode;
+
+          answerBoxes = [];
+          answerLetters = [];
+          answerTokens = tokens || [];
+          currentBox = 0;
+          input.value = '';
+
+          if (!boxMode) {
+            input.focus({ preventScroll: true });
+            return;
+          }
+
+          var word = document.createElement('span');
+          word.className = 'letter-word';
+
+          function closeWord() {
+            if (word.childNodes.length) {
+              boxes.appendChild(word);
+              word = document.createElement('span');
+              word.className = 'letter-word';
+            }
+          }
+
+          tokens.forEach(function (token) {
+            if (token.type === 'gap') {
+              closeWord();
+              return;
+            }
+            if (token.type === 'fixed') {
+              var fixed = document.createElement('span');
+              fixed.className = 'letter-fixed';
+              fixed.textContent = token.ch;
+              word.appendChild(fixed);
+              return;
+            }
+
+            var box = document.createElement('input');
+            box.type = 'text';
+            box.className = 'letter-box';
+            box.maxLength = 1;
+            box.readOnly = true;
+            box.inputMode = 'none';
+            box.autocomplete = 'off';
+            box.setAttribute('autocapitalize', 'off');
+            box.setAttribute('autocorrect', 'off');
+            box.spellcheck = false;
+            box.dataset.index = String(token.index);
+            box.setAttribute('aria-label', '第 ' + (token.index + 1) + ' 个字母');
+            box.addEventListener('focus', function () {
+              currentBox = Number(this.dataset.index);
+            });
+            word.appendChild(box);
+            answerBoxes.push(box);
+            answerLetters.push('');
+          });
+          closeWord();
+          focusAnswer();
+        }
+
+        function setAnswerDisabled(disabled) {
+          $('answerInput').disabled = disabled;
+          for (var i = 0; i < answerBoxes.length; i++) {
+            answerBoxes[i].disabled = disabled;
+          }
+        }
+
+        function answerIsEmpty() {
+          if (boxMode) {
+            for (var i = 0; i < answerLetters.length; i++) {
+              if (answerLetters[i]) return false;
+            }
+            return true;
+          }
+          return !$('answerInput').value.trim();
+        }
+
+        function markAnswerBad(bad) {
+          $('answerInput').classList.toggle('bad', bad);
+          $('letterBoxes').classList.toggle('bad', bad);
+        }
+
+        function shakeAnswer() {
+          var field = boxMode ? $('letterBoxes') : $('answerInput');
+          field.classList.remove('shake');
+          void field.offsetWidth;
+          field.classList.add('shake');
+          focusAnswer();
+        }
+
+        function appendAnswer(ch) {
+          if (!session || session.phase !== 'answering') return;
+          if (boxMode) {
+            if (!answerBoxes.length) return;
+            if (!/^[A-Za-z]$/.test(ch)) return;
+            if (currentBox >= answerBoxes.length) {
+              currentBox = answerBoxes.length - 1;
+            }
+            var box = answerBoxes[currentBox];
+            answerLetters[currentBox] = ch;
+            box.value = ch;
+            box.classList.add('fill');
+            currentBox++;
+            clearAnswerHint();
+            syncAnswerValue();
+            focusAnswer();
+            return;
+          }
+
+          var input = $('answerInput');
+          if (input.disabled) return;
+          if (input.value.length + ch.length > 60) return;
+          input.value += ch;
+          clearAnswerHint();
+          input.focus({ preventScroll: true });
+        }
+
+        function backspaceAnswer() {
+          if (!session || session.phase !== 'answering') return;
+          if (boxMode) {
+            if (!answerBoxes.length) return;
+            var index = currentBox;
+            if (index >= answerBoxes.length) index = answerBoxes.length - 1;
+            if (index < 0) return;
+            if (answerLetters[index]) {
+              answerLetters[index] = '';
+              answerBoxes[index].value = '';
+              answerBoxes[index].classList.remove('fill');
+            } else if (index > 0) {
+              index--;
+              answerLetters[index] = '';
+              answerBoxes[index].value = '';
+              answerBoxes[index].classList.remove('fill');
+            }
+            currentBox = index;
+            clearAnswerHint();
+            syncAnswerValue();
+            focusAnswer();
+            return;
+          }
+
+          var input = $('answerInput');
+          if (input.disabled) return;
+          input.value = input.value.slice(0, -1);
+          clearAnswerHint();
           input.focus({ preventScroll: true });
         }
 
@@ -2006,6 +2463,7 @@
           $('btnSubmit').hidden = true;
           $('btnSkip').hidden = true;
           $('btnNext').hidden = false;
+          $('kbEnter').textContent = session && session.phase === 'feedback' ? '下一个' : '确认';
         }
 
         function clearAutoNext() {
@@ -2019,22 +2477,21 @@
           if (!session || session.phase !== 'answering') return;
 
           var input = $('answerInput');
-          var rec = Q.submit(session, input.value);
+          var raw = answerIsEmpty() ? '' : input.value;
+          var rec = Q.submit(session, raw);
           if (!rec) return;
 
           if (rec.status === 'empty') {
             setFeedback('hint', '先输入英文，或点「跳过」');
-            input.classList.remove('shake');
-            void input.offsetWidth;
-            input.classList.add('shake');
-            input.focus({ preventScroll: true });
+            shakeAnswer();
             return;
           }
 
-          input.disabled = true;
+          setAnswerDisabled(true);
+          setKeyboardEnabled(false);
           if (rec.status === 'correct') {
             setFeedback('ok', '✓ 正确，下一题…');
-            input.classList.remove('bad');
+            markAnswerBad(false);
             showNextButton();
             clearAutoNext();
             autoNextTimer = setTimeout(function () {
@@ -2043,7 +2500,7 @@
             }, 750);
           } else {
             setFeedback('bad', '✗ 正确答案：<b>' + esc(rec.answers.join(' / ')) + '</b>');
-            input.classList.add('bad');
+            markAnswerBad(true);
             showNextButton();
           }
         }
@@ -2051,10 +2508,12 @@
         function doSkip() {
           if (!session || session.phase !== 'answering') return;
 
-          var rec = Q.skip(session, $('answerInput').value);
+          var raw = answerIsEmpty() ? '' : $('answerInput').value;
+          var rec = Q.skip(session, raw);
           if (!rec) return;
 
-          $('answerInput').disabled = true;
+          setAnswerDisabled(true);
+          setKeyboardEnabled(false);
           setFeedback('bad', '已跳过 · 正确答案：<b>' + esc(rec.answers.join(' / ')) + '</b>');
           showNextButton();
         }
@@ -2463,6 +2922,23 @@
         $('btnSkip').addEventListener('click', doSkip);
         $('btnNext').addEventListener('click', doNext);
 
+        $('keyboard').addEventListener('click', function (e) {
+          var key = e.target.closest ? e.target.closest('.kb-key') : null;
+          if (!key || key.disabled) return;
+          if (key.id === 'kbBackspace') {
+            backspaceAnswer();
+            return;
+          }
+          if (key.id === 'kbEnter') {
+            if (!session) return;
+            if (session.phase === 'feedback') doNext();
+            else if (session.phase === 'answering') doSubmit();
+            return;
+          }
+          var ch = key.getAttribute('data-char');
+          if (ch) appendAnswer(ch);
+        });
+
         $('btnQuit').addEventListener('click', function () {
           if (
             session &&
@@ -2535,6 +3011,19 @@
             if (session.phase === 'answering') {
               e.preventDefault();
               doSkip();
+            }
+          } else if (
+            session.phase === 'answering' &&
+            !e.ctrlKey &&
+            !e.metaKey &&
+            !e.altKey
+          ) {
+            if (e.key === 'Backspace') {
+              e.preventDefault();
+              backspaceAnswer();
+            } else if (e.key.length === 1 && /[a-zA-Z'\- ]/.test(e.key)) {
+              e.preventDefault();
+              appendAnswer(e.key);
             }
           }
         });
