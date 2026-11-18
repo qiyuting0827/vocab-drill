@@ -504,7 +504,225 @@
         font-size: 14px;
         margin: 0;
       }
+
+      /* 内置词库 */
+      .seg {
+        display: flex;
+        gap: 4px;
+        padding: 4px;
+        margin-bottom: 16px;
+        background: var(--bg);
+        border-radius: 12px;
+      }
+      .seg-btn {
+        flex: 1;
+        padding: 8px 10px;
+        border-radius: 9px;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--muted);
+      }
+      .seg-btn.active {
+        background: var(--card);
+        border: 1px solid var(--line);
+        color: var(--text);
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+      }
+      .bank-bar {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+        font-size: 13.5px;
+      }
+      .bank-quick {
+        display: inline-flex;
+        gap: 16px;
+      }
+      .bank-books {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        max-height: 340px;
+        overflow-y: auto;
+        padding: 2px;
+        overscroll-behavior: contain;
+      }
+      .book-group {
+        flex: 0 0 auto;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--bg);
+        overflow: hidden;
+      }
+      .book-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 9px 12px;
+        border-bottom: 1px solid var(--line);
+      }
+      .book-all {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 14px;
+        cursor: pointer;
+        user-select: none;
+      }
+      .b-meta {
+        font-size: 11.5px;
+        color: var(--muted);
+      }
+      .book-units {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2px 12px;
+        padding: 8px 12px 10px;
+      }
+      .unit-check {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding: 4px 0;
+        font-size: 13px;
+        cursor: pointer;
+        user-select: none;
+      }
+      .unit-check .u-name {
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .unit-check .u-count {
+        font-size: 11.5px;
+        color: var(--muted);
+      }
+      .range-panel {
+        margin-top: 10px;
+        padding: 8px 10px 6px;
+        border: 1px dashed var(--line);
+        border-radius: 12px;
+        background: var(--card);
+      }
+      .range-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 4px;
+        font-size: 12.5px;
+        color: var(--muted);
+      }
+      .range-head b {
+        color: var(--text);
+        font-size: 13px;
+      }
+      .range-list {
+        display: flex;
+        flex-direction: column;
+        max-height: 260px;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+      }
+      .range-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px 10px;
+        flex-wrap: wrap;
+        padding: 6px 0;
+        border-top: 1px solid var(--line);
+      }
+      .range-row:first-child {
+        border-top: 0;
+      }
+      .range-unit {
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .range-unit small {
+        display: block;
+        font-weight: 400;
+        font-size: 11.5px;
+        color: var(--muted);
+      }
+      .range-pick {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        flex-wrap: wrap;
+        font-size: 12.5px;
+        color: var(--muted);
+      }
+      .range-select {
+        max-width: 158px;
+        padding: 4px 6px;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        background: var(--bg);
+        color: var(--text);
+        font: inherit;
+        font-size: 12.5px;
+      }
+      .range-note {
+        min-width: 52px;
+        font-size: 11.5px;
+        font-weight: 600;
+        color: var(--primary);
+      }
+      .bank-limit {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+        font-size: 13.5px;
+        color: var(--muted);
+      }
+      input.num {
+        width: 74px;
+        padding: 6px 8px;
+        border: 1.5px solid var(--line);
+        border-radius: 8px;
+        background: var(--card);
+        color: var(--text);
+        font: inherit;
+        text-align: center;
+        outline: none;
+      }
+      input.num:focus {
+        border-color: var(--primary);
+      }
+      .prompt.long {
+        font-size: clamp(20px, 4.6vw, 30px);
+        font-weight: 600;
+        line-height: 1.5;
+      }
       @media (max-width: 520px) {
+        .bank-books {
+          max-height: 300px;
+        }
+        .book-units {
+          grid-template-columns: 1fr;
+        }
+        .range-row {
+          align-items: flex-start;
+        }
+        .range-pick {
+          width: 100%;
+        }
+        .range-select {
+          max-width: 132px;
+        }
+        .range-note {
+          margin-left: auto;
+        }
         .card {
           padding: 18px 16px;
         }
@@ -539,27 +757,90 @@
         乐智托管 · 亓老师制作
       </div>
 
-      <!-- 1. 粘贴单词表 -->
+      <!-- 1. 选词 -->
       <section class="card" id="viewSetup">
         <p class="lead">
-          粘贴「英文 + 中文」的单词表，每行一个。练习时只显示中文，你来填英文。
+          勾选单元、按需调整单词范围，或粘贴自己的词表。练习时只显示中文，你来填英文。
         </p>
-        <textarea
-          id="inputWords"
-          spellcheck="false"
-          placeholder="apple 苹果&#10;take off 起飞；脱下&#10;library 图书馆"
-          aria-label="单词表"
-        ></textarea>
-        <div class="row between" style="margin-top: 10px">
-          <span class="muted small" id="parseInfo">还没有识别到单词</span>
-          <button class="btn link" id="btnSample" type="button">填入示例</button>
+
+        <div class="seg" role="tablist" aria-label="词库来源">
+          <button
+            class="seg-btn active"
+            id="tabBank"
+            type="button"
+            role="tab"
+            aria-selected="true"
+          >
+            内置词库
+          </button>
+          <button
+            class="seg-btn"
+            id="tabCustom"
+            type="button"
+            role="tab"
+            aria-selected="false"
+          >
+            粘贴词表
+          </button>
         </div>
-        <div class="warn" id="skippedInfo" hidden></div>
+
+        <div id="panelBank">
+          <div class="bank-bar">
+            <span id="bankSummary">勾选单元后开始</span>
+            <span class="bank-quick">
+              <button class="btn link" id="btnSelectAll" type="button">全选</button>
+              <button class="btn link" id="btnClearSel" type="button">清空</button>
+            </span>
+          </div>
+          <div class="bank-books" id="bookList"></div>
+          <div class="range-panel" id="rangePanel" hidden>
+            <div class="range-head">
+              <b>调整范围</b>
+              <span>默认整单元；可只练第几个到第几个词</span>
+            </div>
+            <div class="range-list" id="rangeList"></div>
+          </div>
+          <div class="bank-limit">
+            <label class="check">
+              本次抽取
+              <input
+                class="num"
+                id="bankLimit"
+                type="number"
+                min="1"
+                step="1"
+                inputmode="numeric"
+                aria-label="本次抽取单词数量"
+              />
+              个词
+            </label>
+            <span>留空 = 练全部已选</span>
+          </div>
+        </div>
+
+        <div id="panelCustom" hidden>
+          <textarea
+            id="inputWords"
+            spellcheck="false"
+            placeholder="apple 苹果&#10;take off 起飞；脱下&#10;library 图书馆"
+            aria-label="单词表"
+          ></textarea>
+          <div class="row between" style="margin-top: 10px">
+            <span class="muted small" id="parseInfo">还没有识别到单词</span>
+            <button class="btn link" id="btnSample" type="button">填入示例</button>
+          </div>
+          <div class="warn" id="skippedInfo" hidden></div>
+          <p class="footnote" style="margin-bottom: 0">
+            支持空格、逗号、Tab、短横线分隔，英文在前或在后都可以。
+          </p>
+        </div>
+
         <div class="row options">
           <label class="check">
             <input type="checkbox" id="optShuffle" checked />
-            随机顺序
+            打乱顺序
           </label>
+          <span class="muted small">答对自动下一题 · 不分大小写</span>
         </div>
         <div class="row actions">
           <button class="btn primary" id="btnStart" type="button" disabled>
@@ -567,7 +848,7 @@
           </button>
         </div>
         <p class="footnote">
-          支持空格、逗号、Tab、短横线分隔，英文在前或在后都可以；练习记录只保存在本机浏览器。
+          内置鲁教版初中英语单词（六上—九全，48 单元）；练习记录只保存在本机浏览器。
         </p>
       </section>
 
@@ -648,6 +929,8 @@
       </section>
     </div>
 
+    <script src="words.js"></script>
+    <script src="bank-select.js"></script>
     <script src="parser.js"></script>
     <script src="quiz.js"></script>
     <script>
@@ -678,6 +961,12 @@
         var currentView = 'setup';
         var historyReturn = 'setup';
 
+        var BANK_KEY = 'vocabDrill.bank.v1';
+        var bank = window.VocabBank || { books: [], units: [] };
+        var selectedUnits = loadSelection();
+        var setupTab = 'bank';
+        var autoNextTimer = null;
+
         function $(id) {
           return document.getElementById(id);
         }
@@ -700,6 +989,261 @@
             $(map[key]).hidden = key !== name;
           });
           window.scrollTo(0, 0);
+        }
+
+        /* ---------- 内置词库 ---------- */
+
+        function loadSelection() {
+          var picked = Object.create(null);
+          var byId = Object.create(null);
+          bank.units.forEach(function (u) {
+            byId[u.id] = u;
+          });
+          try {
+            var raw = JSON.parse(localStorage.getItem(BANK_KEY) || '{}');
+            if (Array.isArray(raw)) {
+              /* 旧版只存单元 id 数组，视为整单元 */
+              raw.forEach(function (id) {
+                var unit = byId[id];
+                if (!unit) return;
+                picked[id] = { start: 0, end: unit.words.length - 1 };
+              });
+            } else if (raw && typeof raw === 'object') {
+              Object.keys(raw).forEach(function (id) {
+                var unit = byId[id];
+                if (!unit) return;
+                var item = raw[id];
+                var start = Array.isArray(item) ? item[0] : item && item.start;
+                var end = Array.isArray(item) ? item[1] : item && item.end;
+                picked[id] = BankSelect.normalizeRange(unit.words.length, start, end);
+              });
+            }
+          } catch (e) {
+            /* ignore */
+          }
+          return picked;
+        }
+
+        function saveSelection() {
+          try {
+            localStorage.setItem(BANK_KEY, JSON.stringify(selectedUnits));
+          } catch (e) {
+            /* ignore */
+          }
+        }
+
+        function unitById(id) {
+          for (var i = 0; i < bank.units.length; i += 1) {
+            if (bank.units[i].id === id) return bank.units[i];
+          }
+          return null;
+        }
+
+        function collectBankItems() {
+          return BankSelect.collectItems(bank.units, selectedUnits);
+        }
+
+        function sampleItems(items, n) {
+          if (!(n > 0) || n >= items.length) return items;
+          var idx = items.map(function (_, i) {
+            return i;
+          });
+          Q.shuffle(idx);
+          idx = idx
+            .slice(0, n)
+            .sort(function (a, b) {
+              return a - b;
+            });
+          return idx.map(function (i) {
+            return items[i];
+          });
+        }
+
+        function effectiveBankItems() {
+          return sampleItems(collectBankItems(), parseInt($('bankLimit').value, 10));
+        }
+
+        function bankModeLabel() {
+          var chosen = bank.units.filter(function (u) {
+            return selectedUnits[u.id];
+          });
+          if (chosen.length === 1) {
+            var unit = chosen[0];
+            var range = selectedUnits[unit.id];
+            if (BankSelect.isFull(unit, range)) return unit.book + ' ' + unit.name;
+            var where =
+              range.start === range.end
+                ? '第 ' + (range.start + 1) + ' 词'
+                : '第 ' + (range.start + 1) + '–' + (range.end + 1) + ' 词';
+            return unit.book + ' ' + unit.name + ' · ' + where;
+          }
+          var partial = chosen.some(function (u) {
+            return !BankSelect.isFull(u, selectedUnits[u.id]);
+          });
+          return '内置词库 · ' + chosen.length + ' 个单元' + (partial ? '（部分范围）' : '');
+        }
+
+        function renderBank() {
+          var html = '';
+          bank.books.forEach(function (book) {
+            var units = bank.units.filter(function (u) {
+              return u.book === book.name;
+            });
+            html += '<section class="book-group">';
+            html +=
+              '<div class="book-head"><label class="book-all"><input type="checkbox" data-book="' +
+              esc(book.name) +
+              '"> <b>' +
+              esc(book.name) +
+              '</b></label><span class="b-meta">' +
+              esc(book.full) +
+              ' · ' +
+              units.length +
+              ' 单元</span></div><div class="book-units">';
+            units.forEach(function (u) {
+              html +=
+                '<label class="unit-check"><input type="checkbox" data-unit="' +
+                esc(u.id) +
+                '"' +
+                (selectedUnits[u.id] ? ' checked' : '') +
+                '> <span class="u-name">' +
+                esc(u.name) +
+                '</span><span class="u-count">' +
+                u.words.length +
+                '</span></label>';
+            });
+            html += '</div></section>';
+          });
+          $('bookList').innerHTML = html;
+          syncBankChecks();
+        }
+
+        function rangeOptionsHtml(unit, selectedIndex) {
+          return unit.words
+            .map(function (w, i) {
+              return (
+                '<option value="' +
+                i +
+                '"' +
+                (i === selectedIndex ? ' selected' : '') +
+                '>' +
+                (i + 1) +
+                '. ' +
+                esc(w[0]) +
+                ' — ' +
+                esc(w[1]) +
+                '</option>'
+              );
+            })
+            .join('');
+        }
+
+        function renderRangeList() {
+          var chosen = bank.units.filter(function (u) {
+            return selectedUnits[u.id];
+          });
+          $('rangePanel').hidden = chosen.length === 0;
+          $('rangeList').innerHTML = chosen
+            .map(function (unit) {
+              var range = selectedUnits[unit.id];
+              var count = range.end - range.start + 1;
+              return (
+                '<div class="range-row">' +
+                '<div class="range-unit">' +
+                esc(unit.name) +
+                '<small>' +
+                esc(unit.book) +
+                ' · ' +
+                unit.words.length +
+                ' 词' +
+                (BankSelect.isFull(unit, range) ? ' · 整单元' : '') +
+                '</small></div>' +
+                '<div class="range-pick">从 <select class="range-select" data-range-start="' +
+                esc(unit.id) +
+                '" aria-label="' +
+                esc(unit.name) +
+                '的起始单词">' +
+                rangeOptionsHtml(unit, range.start) +
+                '</select> 到 <select class="range-select" data-range-end="' +
+                esc(unit.id) +
+                '" aria-label="' +
+                esc(unit.name) +
+                '的结束单词">' +
+                rangeOptionsHtml(unit, range.end) +
+                '</select><span class="range-note">' +
+                count +
+                ' 词</span><button class="btn link" type="button" data-range-full="' +
+                esc(unit.id) +
+                '">整单元</button></div></div>'
+              );
+            })
+            .join('');
+        }
+
+        function syncBankChecks() {
+          Array.prototype.forEach.call(
+            $('bookList').querySelectorAll('[data-book]'),
+            function (box) {
+              var units = bank.units.filter(function (u) {
+                return u.book === box.getAttribute('data-book');
+              });
+              var on = units.filter(function (u) {
+                return selectedUnits[u.id];
+              }).length;
+              box.checked = on > 0 && on === units.length;
+              box.indeterminate = on > 0 && on < units.length;
+            }
+          );
+          Array.prototype.forEach.call(
+            $('bookList').querySelectorAll('[data-unit]'),
+            function (box) {
+              box.checked = !!selectedUnits[box.getAttribute('data-unit')];
+            }
+          );
+          renderRangeList();
+          updateBankSummary();
+        }
+
+        function updateBankSummary() {
+          var n = collectBankItems().length;
+          if (!bank.units.length) {
+            $('bankSummary').textContent = '词库加载失败，请改用粘贴词表';
+          } else if (!n) {
+            var total = bank.units.reduce(function (sum, u) {
+              return sum + u.words.length;
+            }, 0);
+            $('bankSummary').textContent = '勾选单元后开始（共 ' + total + ' 词）';
+          } else {
+            $('bankSummary').textContent = '已选 ' + n + ' 词';
+          }
+          updateStartButton();
+        }
+
+        function updateStartButton() {
+          var btn = $('btnStart');
+          var n = 0;
+          if (setupTab === 'bank') {
+            n = collectBankItems().length;
+            var limit = parseInt($('bankLimit').value, 10);
+            if (limit > 0 && limit < n) n = limit;
+          } else {
+            n = parsed.items.length;
+          }
+          btn.disabled = n === 0;
+          btn.textContent = n ? '开始默写（' + n + ' 词）' : '开始默写';
+        }
+
+        function setTab(name) {
+          setupTab = name;
+          var onBank = name === 'bank';
+          $('panelBank').hidden = !onBank;
+          $('panelCustom').hidden = onBank;
+          $('tabBank').classList.toggle('active', onBank);
+          $('tabCustom').classList.toggle('active', !onBank);
+          $('tabBank').setAttribute('aria-selected', String(onBank));
+          $('tabCustom').setAttribute('aria-selected', String(!onBank));
+          if (onBank) updateStartButton();
+          else refreshPreview();
         }
 
         /* ---------- 本地存储 ---------- */
@@ -772,9 +1316,8 @@
           parsed = P.parseWordList($('inputWords').value);
           var n = parsed.items.length;
 
-          $('btnStart').disabled = n === 0;
-          $('btnStart').textContent = n ? '开始默写（' + n + ' 词）' : '开始默写';
           $('parseInfo').textContent = n ? '已识别 ' + n + ' 个单词' : '还没有识别到单词';
+          updateStartButton();
 
           if (parsed.skipped.length) {
             var lines = parsed.skipped.slice(0, 3).map(function (s) {
@@ -801,6 +1344,7 @@
 
         function startSession(items, mode) {
           if (!items || !items.length) return;
+          clearAutoNext();
           modeLabel = mode || '全部单词';
           session = Q.createSession(items, { shuffle: $('optShuffle').checked });
           summary = null;
@@ -813,11 +1357,13 @@
           var item = Q.current(session);
           if (!item) return;
 
+          clearAutoNext();
           var index = session.index;
           var total = session.queue.length;
           $('progressText').textContent = '第 ' + (index + 1) + ' / ' + total + ' 题';
           $('progressBar').style.width = Math.round((index / total) * 100) + '%';
           $('promptZh').textContent = item.zh;
+          $('promptZh').classList.toggle('long', item.zh.length > 12);
 
           var input = $('answerInput');
           input.value = '';
@@ -845,6 +1391,13 @@
           $('btnNext').hidden = false;
         }
 
+        function clearAutoNext() {
+          if (autoNextTimer) {
+            clearTimeout(autoNextTimer);
+            autoNextTimer = null;
+          }
+        }
+
         function doSubmit() {
           if (!session || session.phase !== 'answering') return;
 
@@ -863,13 +1416,19 @@
 
           input.disabled = true;
           if (rec.status === 'correct') {
-            setFeedback('ok', '✓ 正确');
+            setFeedback('ok', '✓ 正确，下一题…');
             input.classList.remove('bad');
+            showNextButton();
+            clearAutoNext();
+            autoNextTimer = setTimeout(function () {
+              autoNextTimer = null;
+              doNext();
+            }, 750);
           } else {
             setFeedback('bad', '✗ 正确答案：<b>' + esc(rec.answers.join(' / ')) + '</b>');
             input.classList.add('bad');
+            showNextButton();
           }
-          showNextButton();
         }
 
         function doSkip() {
@@ -885,11 +1444,13 @@
 
         function doNext() {
           if (!session || session.phase !== 'feedback') return;
+          clearAutoNext();
           if (Q.next(session)) renderCurrent();
           else finish();
         }
 
         function finish() {
+          clearAutoNext();
           summary = Q.summary(session);
           saveHistoryRecord(summary);
 
@@ -1005,6 +1566,92 @@
 
         /* ---------- 事件绑定 ---------- */
 
+        $('tabBank').addEventListener('click', function () {
+          setTab('bank');
+        });
+
+        $('tabCustom').addEventListener('click', function () {
+          setTab('custom');
+        });
+
+        $('btnSelectAll').addEventListener('click', function () {
+          bank.units.forEach(function (u) {
+            selectedUnits[u.id] = { start: 0, end: u.words.length - 1 };
+          });
+          saveSelection();
+          syncBankChecks();
+        });
+
+        $('btnClearSel').addEventListener('click', function () {
+          selectedUnits = Object.create(null);
+          saveSelection();
+          syncBankChecks();
+        });
+
+        $('bookList').addEventListener('change', function (e) {
+          var box = e.target;
+          if (!box) return;
+          var unitId = box.getAttribute('data-unit');
+          var bookName = box.getAttribute('data-book');
+          if (unitId) {
+            var unit = unitById(unitId);
+            if (!unit) return;
+            if (box.checked) selectedUnits[unitId] = { start: 0, end: unit.words.length - 1 };
+            else delete selectedUnits[unitId];
+          } else if (bookName) {
+            bank.units.forEach(function (u) {
+              if (u.book !== bookName) return;
+              if (box.checked) selectedUnits[u.id] = { start: 0, end: u.words.length - 1 };
+              else delete selectedUnits[u.id];
+            });
+          } else {
+            return;
+          }
+          saveSelection();
+          syncBankChecks();
+        });
+
+        $('rangeList').addEventListener('change', function (e) {
+          var select = e.target;
+          if (!select || select.tagName !== 'SELECT') return;
+          var startId = select.getAttribute('data-range-start');
+          var endId = select.getAttribute('data-range-end');
+          var id = startId || endId;
+          var unit = unitById(id);
+          var range = selectedUnits[id];
+          if (!unit || !range) return;
+
+          var value = parseInt(select.value, 10);
+          if (startId) {
+            range.start = value;
+            if (range.start > range.end) range.end = range.start;
+          } else {
+            range.end = value;
+            if (range.end < range.start) range.start = range.end;
+          }
+          selectedUnits[id] = BankSelect.normalizeRange(unit.words.length, range.start, range.end);
+          saveSelection();
+          renderRangeList();
+          updateBankSummary();
+        });
+
+        $('rangeList').addEventListener('click', function (e) {
+          var btn = e.target.closest('[data-range-full]');
+          if (!btn) return;
+          var id = btn.getAttribute('data-range-full');
+          var unit = unitById(id);
+          if (!unit) return;
+          selectedUnits[id] = { start: 0, end: unit.words.length - 1 };
+          saveSelection();
+          renderRangeList();
+          updateBankSummary();
+        });
+
+        $('bankLimit').addEventListener('input', function () {
+          if (this.value && !(parseInt(this.value, 10) > 0)) this.value = '';
+          updateStartButton();
+        });
+
         $('inputWords').addEventListener('input', function () {
           writeDraft(this.value);
           schedulePreview();
@@ -1018,8 +1665,14 @@
         });
 
         $('btnStart').addEventListener('click', function () {
-          refreshPreview();
-          startSession(parsed.items, '全部单词');
+          if (setupTab === 'bank') {
+            var items = effectiveBankItems();
+            if (!items.length) return;
+            startSession(items, bankModeLabel());
+          } else {
+            refreshPreview();
+            startSession(parsed.items, '自定义词表');
+          }
         });
 
         $('btnSubmit').addEventListener('click', doSubmit);
@@ -1034,6 +1687,7 @@
           ) {
             return;
           }
+          clearAutoNext();
           session = null;
           refreshPreview();
           showView('setup');
@@ -1100,8 +1754,10 @@
 
         var draft = readDraft();
         if (draft) $('inputWords').value = draft;
+        renderBank();
         refreshPreview();
         refreshHistoryBadge();
+        setTab('bank');
         showView('setup');
       })();
     </script>
