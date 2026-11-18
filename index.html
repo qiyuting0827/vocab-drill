@@ -294,7 +294,8 @@
         font-size: 14px;
         font-weight: 600;
       }
-      .student-field input {
+      .student-field input,
+      .student-field select {
         flex: 1 1 180px;
         max-width: 260px;
         padding: 9px 12px;
@@ -307,13 +308,181 @@
         outline: none;
         transition: border-color 0.15s;
       }
-      .student-field input:focus {
+      .student-field select {
+        flex: 0 1 200px;
+        max-width: 220px;
+        cursor: pointer;
+      }
+      .student-field input:focus,
+      .student-field select:focus {
         border-color: var(--primary);
       }
       .student-field .hint {
         margin-left: auto;
         font-size: 12px;
         color: var(--muted);
+      }
+      .student-extra {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin: -6px 0 14px;
+        font-size: 12.5px;
+        color: var(--muted);
+      }
+      .student-manage {
+        margin: 0 0 16px;
+        padding: 12px;
+        border: 1px dashed var(--line);
+        border-radius: 12px;
+        background: var(--card);
+      }
+      .manage-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .manage-row input {
+        flex: 1 1 160px;
+        min-width: 120px;
+        padding: 8px 11px;
+        border-radius: 9px;
+        border: 1.5px solid var(--line);
+        background: var(--bg);
+        color: var(--text);
+        font: inherit;
+        font-size: 13.5px;
+        outline: none;
+      }
+      .manage-row input:focus {
+        border-color: var(--primary);
+      }
+      .student-manage textarea {
+        width: 100%;
+        min-height: 86px;
+        margin-top: 8px;
+        padding: 9px 11px;
+        border-radius: 9px;
+        border: 1.5px solid var(--line);
+        background: var(--bg);
+        color: var(--text);
+        font: inherit;
+        font-size: 13.5px;
+        resize: vertical;
+        outline: none;
+      }
+      .student-manage textarea:focus {
+        border-color: var(--primary);
+      }
+      .btn.sm {
+        padding: 8px 14px;
+        font-size: 13px;
+      }
+      .roster {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+      }
+      .roster-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 6px 4px 10px;
+        border-radius: 99px;
+        background: var(--primary-weak);
+        color: var(--primary);
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .roster-chip button {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        line-height: 1;
+        font-size: 14px;
+        color: inherit;
+        opacity: 0.7;
+      }
+      .roster-chip button:hover {
+        opacity: 1;
+        background: rgba(0, 0, 0, 0.08);
+      }
+      .roster-empty {
+        margin: 10px 0 0;
+        font-size: 12.5px;
+        color: var(--muted);
+      }
+      .top-actions {
+        display: inline-flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .history-filter {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .history-filter select {
+        padding: 7px 10px;
+        border-radius: 9px;
+        border: 1.5px solid var(--line);
+        background: var(--bg);
+        color: var(--text);
+        font: inherit;
+        font-size: 13px;
+        outline: none;
+        max-width: 200px;
+      }
+      .review-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 12px;
+      }
+      .review-item {
+        padding: 10px 12px;
+        border-radius: 10px;
+        background: var(--bg);
+        border: 1px solid var(--line);
+      }
+      .review-item .rev-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .review-item .rev-zh {
+        font-weight: 600;
+        min-width: 0;
+        word-break: break-word;
+      }
+      .review-item .rev-en {
+        color: var(--ok);
+        font-weight: 600;
+        margin-top: 2px;
+        word-break: break-word;
+      }
+      .review-item .rev-meta {
+        font-size: 11.5px;
+        color: var(--muted);
+        margin-top: 4px;
+      }
+      .review-item .rev-remove {
+        flex: 0 0 auto;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .review-item .rev-remove:hover {
+        color: var(--bad);
       }
 
       .progress {
@@ -807,8 +976,12 @@
         .card {
           padding: 18px 16px;
         }
-        .student-field input {
+        .student-field input,
+        .student-field select {
           max-width: none;
+        }
+        .student-field select {
+          flex: 1 1 100%;
         }
         .student-field .hint {
           margin-left: 0;
@@ -835,9 +1008,14 @@
             <p>看中文，写英文</p>
           </div>
         </div>
-        <button class="btn ghost" id="btnHistoryTop" type="button">
-          历史记录 <span class="badge" id="historyCount" hidden>0</span>
-        </button>
+        <div class="top-actions">
+          <button class="btn ghost" id="btnReviewTop" type="button">
+            错题本 <span class="badge" id="reviewCount" hidden>0</span>
+          </button>
+          <button class="btn ghost" id="btnHistoryTop" type="button">
+            历史记录 <span class="badge" id="historyCount" hidden>0</span>
+          </button>
+        </div>
       </header>
 
       <div class="maker-bar">
@@ -852,16 +1030,55 @@
         </p>
 
         <div class="student-field">
-          <label for="studentName">学员姓名</label>
-          <input
-            id="studentName"
-            type="text"
-            maxlength="20"
-            autocomplete="off"
-            placeholder="填写名字"
-            aria-describedby="studentHint"
-          />
-          <span class="hint" id="studentHint">必填，会记入历史记录</span>
+          <label for="studentSelect">学员</label>
+          <select id="studentSelect" aria-describedby="studentHint"></select>
+          <button class="btn link" id="btnManageStudents" type="button">
+            管理名单
+          </button>
+          <span class="hint" id="studentHint">先选择学员；名单可添加或导入</span>
+        </div>
+        <div class="student-extra" id="studentExtra" hidden>
+          <span id="studentMistakeHint"></span>
+          <button class="btn link" id="btnStudentReview" type="button">
+            去复习 →
+          </button>
+        </div>
+        <div class="student-manage" id="studentManage" hidden>
+          <div class="manage-row">
+            <input
+              id="newStudentName"
+              type="text"
+              maxlength="20"
+              autocomplete="off"
+              placeholder="输入姓名后添加"
+              aria-label="新学员姓名"
+            />
+            <button class="btn secondary sm" id="btnAddStudent" type="button">
+              添加
+            </button>
+            <button class="btn link" id="btnToggleImport" type="button">
+              批量导入
+            </button>
+          </div>
+          <span class="muted small" id="rosterHint" style="display: block; margin-top: 6px"></span>
+          <div id="importBox" hidden>
+            <textarea
+              id="studentImport"
+              spellcheck="false"
+              placeholder="每行一个姓名，也可用逗号、顿号分隔"
+              aria-label="批量导入学员"
+            ></textarea>
+            <div class="row between" style="margin-top: 8px">
+              <span class="muted small" id="importHint"></span>
+              <button class="btn primary sm" id="btnImportStudents" type="button">
+                导入名单
+              </button>
+            </div>
+          </div>
+          <div class="roster" id="rosterList"></div>
+          <p class="footnote" style="margin: 8px 0 0">
+            移除学员不会删除其历史记录和错题本。
+          </p>
         </div>
 
         <div class="seg" role="tablist" aria-label="词库来源">
@@ -1027,27 +1244,63 @@
           <h2>历史记录</h2>
           <button class="btn ghost" id="btnClearHistory" type="button">清空</button>
         </div>
+        <div class="history-filter">
+          <label for="historyStudentFilter">学员</label>
+          <select id="historyStudentFilter"></select>
+        </div>
         <div class="history-list" id="historyList"></div>
         <div class="row actions">
           <button class="btn secondary" id="btnBack" type="button">返回</button>
         </div>
       </section>
+
+      <!-- 5. 错题本 -->
+      <section class="card" id="viewReview" hidden>
+        <div class="row between">
+          <h2>错题本</h2>
+          <button class="btn ghost" id="btnClearStudentMistakes" type="button">
+            清空该学员
+          </button>
+        </div>
+        <div class="student-field">
+          <label for="reviewStudent">学员</label>
+          <select id="reviewStudent"></select>
+          <span class="hint" id="reviewSummary">选择学员查看错题</span>
+        </div>
+        <div class="review-list" id="reviewList"></div>
+        <div class="row actions">
+          <button class="btn primary" id="btnReviewStart" type="button" disabled>
+            复习错题
+          </button>
+          <button class="btn secondary" id="btnReviewBack" type="button">
+            返回
+          </button>
+        </div>
+        <p class="footnote">
+          复习时答对同一个错词两次，会自动移出错题本；建议每周复习一次。
+        </p>
+      </section>
     </div>
 
-    <script src="words.js?v=20261118"></script>
-    <script src="bank-select.js?v=20261118"></script>
-    <script src="parser.js?v=20261118"></script>
-    <script src="quiz.js?v=20261118"></script>
+    <script src="words.js?v=20261118b"></script>
+    <script src="bank-select.js?v=20261118b"></script>
+    <script src="parser.js?v=20261118b"></script>
+    <script src="quiz.js?v=20261118b"></script>
+    <script src="students.js?v=20261118b"></script>
     <script>
       (function () {
         'use strict';
 
         var P = window.VocabParser;
         var Q = window.VocabQuiz;
+        var SB = window.StudentBook;
 
         var HISTORY_KEY = 'vocabDrill.history.v1';
         var DRAFT_KEY = 'vocabDrill.draft.v1';
         var STUDENT_KEY = 'vocabDrill.student.v1';
+        var STUDENTS_KEY = 'vocabDrill.students.v1';
+        var MISTAKE_KEY = 'vocabDrill.mistakes.v1';
+        var SELECTED_KEY = 'vocabDrill.selectedStudent.v1';
         var MAX_HISTORY = 50;
         var SAMPLE = [
           'apple 苹果',
@@ -1066,6 +1319,12 @@
         var modeLabel = '';
         var currentView = 'setup';
         var historyReturn = 'setup';
+        var reviewReturn = 'setup';
+
+        var students = loadStudents();
+        var mistakeBook = loadMistakes();
+        var currentStudent = '';
+        var sessionReview = false;
 
         var BANK_KEY = 'vocabDrill.bank.v1';
         var bank = window.VocabBank || { books: [], units: [] };
@@ -1090,6 +1349,7 @@
             practice: 'viewPractice',
             result: 'viewResult',
             history: 'viewHistory',
+            review: 'viewReview',
           };
           Object.keys(map).forEach(function (key) {
             $(map[key]).hidden = key !== name;
@@ -1364,10 +1624,10 @@
           }
         }
 
-        function saveHistoryRecord(sum) {
+        function saveHistoryRecord(sum, student) {
           var record = {
             at: new Date().toISOString(),
-            student: sum.student || '',
+            student: SB.cleanName(student || sum.student || ''),
             mode: modeLabel || '全部单词',
             total: sum.total,
             correct: sum.correct,
@@ -1415,16 +1675,246 @@
           }
         }
 
-        function studentNameValue() {
-          return $('studentName').value.trim().replace(/\s+/g, ' ');
-        }
-
-        function saveStudentName(value) {
+        function loadStudents() {
+          var list = [];
           try {
-            localStorage.setItem(STUDENT_KEY, value);
+            var raw = JSON.parse(localStorage.getItem(STUDENTS_KEY) || '[]');
+            if (Array.isArray(raw)) list = raw;
           } catch (e) {
             /* ignore */
           }
+          list = list.map(SB.cleanName).filter(Boolean);
+          var seen = {};
+          list = list.filter(function (name) {
+            var key = name.toLowerCase();
+            if (seen[key]) return false;
+            seen[key] = true;
+            return true;
+          });
+
+          /* 兼容旧版只保存了一个姓名的数据 */
+          var legacy = '';
+          try {
+            legacy = localStorage.getItem(STUDENT_KEY) || '';
+          } catch (e) {
+            /* ignore */
+          }
+          if (legacy && !seen[SB.cleanName(legacy).toLowerCase()]) {
+            list = SB.addNames(list, legacy).list;
+          }
+          return list;
+        }
+
+        function saveStudents() {
+          try {
+            localStorage.setItem(STUDENTS_KEY, JSON.stringify(students));
+          } catch (e) {
+            /* ignore */
+          }
+        }
+
+        function loadMistakes() {
+          try {
+            var raw = JSON.parse(localStorage.getItem(MISTAKE_KEY) || '{}');
+            return raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
+          } catch (e) {
+            return {};
+          }
+        }
+
+        function saveMistakes() {
+          try {
+            localStorage.setItem(MISTAKE_KEY, JSON.stringify(mistakeBook));
+          } catch (e) {
+            /* ignore */
+          }
+        }
+
+        function saveSelectedStudent(name) {
+          try {
+            localStorage.setItem(SELECTED_KEY, name || '');
+            localStorage.setItem(STUDENT_KEY, name || '');
+          } catch (e) {
+            /* ignore */
+          }
+        }
+
+        function studentNameValue() {
+          return $('studentSelect').value || '';
+        }
+
+        function fillStudentSelect(select, placeholder, value) {
+          var html = '<option value="">' + esc(placeholder) + '</option>';
+          students.forEach(function (name) {
+            html +=
+              '<option value="' +
+              esc(name) +
+              '"' +
+              (name === value ? ' selected' : '') +
+              '>' +
+              esc(name) +
+              '</option>';
+          });
+          select.innerHTML = html;
+          select.value = students.indexOf(value) >= 0 ? value : '';
+        }
+
+        function refreshStudentSelects(preferredMain) {
+          var mainValue =
+            preferredMain != null ? preferredMain : $('studentSelect').value;
+          var reviewValue = $('reviewStudent').value;
+          var historyValue = $('historyStudentFilter').value;
+          if (students.indexOf(mainValue) < 0) mainValue = students[0] || '';
+          if (students.indexOf(reviewValue) < 0) reviewValue = mainValue;
+
+          fillStudentSelect($('studentSelect'), '请选择学员', mainValue);
+          fillStudentSelect($('reviewStudent'), '选择学员', reviewValue);
+          fillStudentSelect($('historyStudentFilter'), '全部学员', historyValue);
+
+          currentStudent = $('studentSelect').value;
+          saveSelectedStudent(currentStudent);
+          updateStudentHint();
+          updateStartButton();
+          renderReview();
+        }
+
+        function updateStudentHint() {
+          var name = $('studentSelect').value;
+          var hint = $('studentHint');
+          if (!students.length) {
+            hint.textContent = '还没有学员，点「管理名单」添加';
+          } else if (!name) {
+            hint.textContent = '请选择学员';
+          } else {
+            hint.textContent = '名单可添加或导入';
+          }
+
+          var extra = $('studentExtra');
+          if (!name) {
+            extra.hidden = true;
+            return;
+          }
+          var count = SB.countMistakes(mistakeBook, name);
+          if (count > 0) {
+            extra.hidden = false;
+            $('studentMistakeHint').textContent =
+              '该学员有 ' + count + ' 个错词待复习';
+          } else {
+            extra.hidden = true;
+          }
+        }
+
+        function renderRoster() {
+          var box = $('rosterList');
+          if (!students.length) {
+            box.innerHTML =
+              '<p class="roster-empty">还没有学员，先在上方添加或导入名单。</p>';
+            return;
+          }
+          box.innerHTML = students
+            .map(function (name) {
+              return (
+                '<span class="roster-chip">' +
+                esc(name) +
+                '<button type="button" data-remove-student="' +
+                esc(name) +
+                '" aria-label="移除 ' +
+                esc(name) +
+                '">×</button></span>'
+              );
+            })
+            .join('');
+        }
+
+        function addStudentNames(text) {
+          var result = SB.addNames(students, text);
+          if (!result.added.length) return 0;
+          students = result.list;
+          saveStudents();
+          var pick = $('studentSelect').value;
+          if (!pick || students.indexOf(pick) < 0) pick = result.added[0];
+          refreshStudentSelects(pick);
+          renderRoster();
+          return result.added.length;
+        }
+
+        function updateMistakeBadges() {
+          var total = 0;
+          students.forEach(function (name) {
+            total += SB.countMistakes(mistakeBook, name);
+          });
+          var badge = $('reviewCount');
+          badge.textContent = String(total);
+          badge.hidden = total === 0;
+          updateStudentHint();
+          renderReview();
+        }
+
+        function renderReview() {
+          var select = $('reviewStudent');
+          if (!select) return;
+          var name = select.value;
+          var list = name ? SB.listMistakes(mistakeBook, name) : [];
+
+          $('reviewSummary').textContent = name
+            ? list.length
+              ? list.length + ' 个错词 · 答对两次自动移出'
+              : '这个学员还没有错题'
+            : '选择学员查看错题';
+          $('btnReviewStart').disabled = list.length === 0;
+          $('btnReviewStart').textContent = list.length
+            ? '复习错题（' + list.length + ' 词）'
+            : '复习错题';
+          $('btnClearStudentMistakes').disabled = !name || list.length === 0;
+
+          if (!name) {
+            $('reviewList').innerHTML = '<p class="empty">先选择学员。</p>';
+            return;
+          }
+          if (!list.length) {
+            $('reviewList').innerHTML =
+              '<p class="empty">还没有错题记录，继续保持 👏</p>';
+            return;
+          }
+          $('reviewList').innerHTML = list
+            .map(function (entry) {
+              var answers =
+                entry.answers && entry.answers.length
+                  ? entry.answers.join(' / ')
+                  : entry.en;
+              return (
+                '<div class="review-item"><div class="rev-top"><div>' +
+                '<div class="rev-zh">' +
+                esc(entry.zh) +
+                '</div><div class="rev-en">' +
+                esc(answers) +
+                '</div></div>' +
+                '<button class="btn link rev-remove" type="button" data-mistake-en="' +
+                esc(entry.en) +
+                '" data-mistake-zh="' +
+                esc(entry.zh) +
+                '">移除</button></div>' +
+                '<div class="rev-meta">错 ' +
+                (entry.wrong || 0) +
+                ' 次 · 对 ' +
+                (entry.right || 0) +
+                ' 次' +
+                (entry.lastAt ? ' · 上次：' + esc(fmtDate(entry.lastAt)) : '') +
+                '</div></div>'
+              );
+            })
+            .join('');
+        }
+
+        function openReview(name) {
+          if (currentView !== 'review') reviewReturn = currentView;
+          if (name && students.indexOf(name) >= 0) {
+            $('reviewStudent').value = name;
+          } else if (!$('reviewStudent').value) {
+            $('reviewStudent').value = studentNameValue() || students[0] || '';
+          }
+          renderReview();
+          showView('review');
         }
 
         /* ---------- 单词表预览 ---------- */
@@ -1461,13 +1951,16 @@
 
         /* ---------- 默写流程 ---------- */
 
-        function startSession(items, mode, student) {
+        function startSession(items, mode, student, options) {
           if (!items || !items.length) return;
           clearAutoNext();
           modeLabel = mode || '全部单词';
+          currentStudent = SB.cleanName(student);
+          sessionReview = !!(options && options.review);
+          saveSelectedStudent(currentStudent);
           session = Q.createSession(items, {
             shuffle: $('optShuffle').checked,
-            student: student || '',
+            student: currentStudent,
           });
           summary = null;
           $('modeText').textContent = modeLabel;
@@ -1576,15 +2069,33 @@
         function finish() {
           clearAutoNext();
           summary = Q.summary(session);
-          saveHistoryRecord(summary);
+          var finishedStudent = currentStudent || summary.student || '';
+          saveHistoryRecord(summary, finishedStudent);
+
+          var beforeMistakes = SB.countMistakes(mistakeBook, finishedStudent);
+          mistakeBook = SB.recordResults(
+            mistakeBook,
+            finishedStudent,
+            session.results,
+            { review: sessionReview }
+          );
+          saveMistakes();
+          var afterMistakes = SB.countMistakes(mistakeBook, finishedStudent);
+          updateMistakeBadges();
 
           $('resultTitle').textContent = summary.accuracy === 1 ? '🎉 全对！' : '本轮完成';
           $('resultSub').hidden = false;
           $('resultSub').textContent =
-            (summary.student ? '学员：' + summary.student : '未填写学员姓名') +
+            (finishedStudent ? '学员：' + finishedStudent : '未填写学员姓名') +
             ' · 共 ' +
             summary.total +
-            ' 题';
+            ' 题' +
+            (beforeMistakes > afterMistakes
+              ? ' · 已掌握 ' + (beforeMistakes - afterMistakes) + ' 个'
+              : '') +
+            (afterMistakes > 0
+              ? ' · 错题本还有 ' + afterMistakes + ' 个'
+              : '');
           $('statCorrect').textContent = String(summary.correct);
           $('statWrong').textContent = String(summary.wrong);
           $('statSkipped').textContent = String(summary.skipped);
@@ -1652,10 +2163,19 @@
         }
 
         function renderHistory() {
-          var list = loadHistory();
+          var all = loadHistory();
+          var filter = $('historyStudentFilter').value;
+          var list = filter
+            ? all.filter(function (rec) {
+                return SB.cleanName(rec.student) === filter;
+              })
+            : all;
           var box = $('historyList');
           if (!list.length) {
-            box.innerHTML = '<p class="empty">还没有历史记录，先去练一轮吧。</p>';
+            box.innerHTML =
+              '<p class="empty">' +
+              (filter ? '该学员还没有历史记录。' : '还没有历史记录，先去练一轮吧。') +
+              '</p>';
             return;
           }
           box.innerHTML = list
@@ -1673,7 +2193,7 @@
                 rec.wrong +
                 ' · 跳过 ' +
                 rec.skipped;
-              var name = rec.student ? String(rec.student) : '';
+              var name = SB.cleanName(rec.student);
               var who =
                 '<span class="s-who"><span class="s-name' +
                 (name ? '' : ' none') +
@@ -1699,6 +2219,7 @@
 
         function openHistory(returnTo) {
           historyReturn = returnTo || 'setup';
+          refreshStudentSelects(studentNameValue());
           renderHistory();
           showView('history');
         }
@@ -1791,10 +2312,129 @@
           updateStartButton();
         });
 
-        $('studentName').addEventListener('input', function () {
-          saveStudentName(this.value.trim());
+        $('studentSelect').addEventListener('change', function () {
+          currentStudent = this.value;
+          saveSelectedStudent(currentStudent);
           updateStartButton();
+          updateStudentHint();
         });
+
+        $('btnManageStudents').addEventListener('click', function () {
+          var panel = $('studentManage');
+          panel.hidden = !panel.hidden;
+          if (!panel.hidden) {
+            renderRoster();
+            $('newStudentName').focus();
+          }
+        });
+
+        function addFromStudentInput() {
+          var input = $('newStudentName');
+          var added = addStudentNames(input.value);
+          if (!added) {
+            $('rosterHint').textContent = '姓名不能为空，或已在名单中';
+            input.focus();
+            return;
+          }
+          input.value = '';
+          $('rosterHint').textContent = '已添加 ' + added + ' 个学员';
+          input.focus();
+        }
+
+        $('btnAddStudent').addEventListener('click', addFromStudentInput);
+
+        $('newStudentName').addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            addFromStudentInput();
+          }
+        });
+
+        $('btnToggleImport').addEventListener('click', function () {
+          var box = $('importBox');
+          box.hidden = !box.hidden;
+          if (!box.hidden) $('studentImport').focus();
+        });
+
+        $('btnImportStudents').addEventListener('click', function () {
+          var added = addStudentNames($('studentImport').value);
+          if (!added) {
+            $('rosterHint').textContent = '没有新增姓名（可能已在名单中）';
+            return;
+          }
+          $('studentImport').value = '';
+          $('rosterHint').textContent = '已导入 ' + added + ' 个学员';
+        });
+
+        $('rosterList').addEventListener('click', function (e) {
+          var btn = e.target.closest('[data-remove-student]');
+          if (!btn) return;
+          var name = btn.getAttribute('data-remove-student');
+          if (
+            !window.confirm(
+              '从名单移除「' + name + '」？历史记录和错题本会保留。'
+            )
+          ) {
+            return;
+          }
+          students = SB.removeName(students, name);
+          saveStudents();
+          if (currentStudent === name) currentStudent = '';
+          refreshStudentSelects(currentStudent);
+          renderRoster();
+          $('rosterHint').textContent = '已移除 ' + name;
+        });
+
+        $('btnStudentReview').addEventListener('click', function () {
+          openReview(studentNameValue());
+        });
+
+        $('btnReviewTop').addEventListener('click', function () {
+          openReview(studentNameValue());
+        });
+
+        $('reviewStudent').addEventListener('change', renderReview);
+
+        $('btnReviewStart').addEventListener('click', function () {
+          var name = $('reviewStudent').value;
+          var items = name ? SB.reviewItems(mistakeBook, name) : [];
+          if (!items.length) return;
+          $('studentSelect').value = name;
+          currentStudent = name;
+          saveSelectedStudent(name);
+          startSession(items, '错题复习', name, { review: true });
+        });
+
+        $('reviewList').addEventListener('click', function (e) {
+          var btn = e.target.closest('[data-mistake-en]');
+          if (!btn) return;
+          var name = $('reviewStudent').value;
+          mistakeBook = SB.removeMistake(
+            mistakeBook,
+            name,
+            btn.getAttribute('data-mistake-en'),
+            btn.getAttribute('data-mistake-zh')
+          );
+          saveMistakes();
+          updateMistakeBadges();
+        });
+
+        $('btnClearStudentMistakes').addEventListener('click', function () {
+          var name = $('reviewStudent').value;
+          if (!name) return;
+          if (!window.confirm('清空「' + name + '」的全部错题？此操作不可撤销。')) {
+            return;
+          }
+          mistakeBook = SB.clearStudent(mistakeBook, name);
+          saveMistakes();
+          updateMistakeBadges();
+        });
+
+        $('btnReviewBack').addEventListener('click', function () {
+          showView(reviewReturn);
+        });
+
+        $('historyStudentFilter').addEventListener('change', renderHistory);
 
         $('inputWords').addEventListener('input', function () {
           writeDraft(this.value);
@@ -1847,7 +2487,12 @@
             seen[key] = true;
             items.push({ en: m.en, zh: m.zh, answers: m.answers });
           });
-          startSession(items, '错词重练', session ? session.student : '');
+          startSession(
+            items,
+            '错词重练',
+            currentStudent || (session ? session.student : ''),
+            { review: true }
+          );
         });
 
         $('btnRestart').addEventListener('click', function () {
@@ -1898,14 +2543,25 @@
 
         var draft = readDraft();
         if (draft) $('inputWords').value = draft;
+        var savedStudent = '';
         try {
-          $('studentName').value = localStorage.getItem(STUDENT_KEY) || '';
+          savedStudent = localStorage.getItem(SELECTED_KEY) || '';
         } catch (e) {
           /* ignore */
+        }
+        if (!savedStudent || students.indexOf(savedStudent) < 0) {
+          try {
+            savedStudent = SB.cleanName(localStorage.getItem(STUDENT_KEY) || '');
+          } catch (e) {
+            /* ignore */
+          }
         }
         renderBank();
         refreshPreview();
         refreshHistoryBadge();
+        refreshStudentSelects(savedStudent);
+        renderRoster();
+        updateMistakeBadges();
         setTab('bank');
         showView('setup');
       })();
