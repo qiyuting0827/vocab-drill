@@ -1095,6 +1095,102 @@
         font-weight: 600;
         line-height: 1.5;
       }
+      .sync-bar {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        margin: 0 0 14px;
+        min-height: 22px;
+        font-size: 12.5px;
+        color: var(--muted);
+      }
+      .sync-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--line);
+        flex: 0 0 auto;
+      }
+      .sync-dot.on {
+        background: var(--ok);
+      }
+      .sync-dot.busy {
+        background: var(--primary);
+        animation: syncPulse 1s ease-in-out infinite;
+      }
+      .sync-dot.err {
+        background: var(--bad);
+      }
+      @keyframes syncPulse {
+        50% {
+          opacity: 0.35;
+        }
+      }
+      .sync-open {
+        margin-left: auto;
+      }
+      .sync-code-box {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 12px;
+        margin: 12px 0;
+        border-radius: 12px;
+        background: var(--primary-weak);
+      }
+      .sync-code-box > span {
+        font-size: 12.5px;
+        color: var(--muted);
+      }
+      .sync-code-box code {
+        flex: 1 1 100%;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        word-break: break-all;
+        color: var(--primary);
+      }
+      .sync-code-box .btn {
+        margin-left: auto;
+      }
+      .sync-or {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 16px 0 10px;
+        font-size: 12.5px;
+        color: var(--muted);
+      }
+      .sync-or:before,
+      .sync-or:after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--line);
+      }
+      .sync-status-line {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin: 8px 0;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .sync-status-line b {
+        color: var(--text);
+        font-weight: 600;
+      }
+      @media (max-width: 520px) {
+        .sync-code-box code {
+          font-size: 12.5px;
+        }
+        .sync-status-line {
+          flex-direction: column;
+          gap: 2px;
+        }
+      }
       @media (max-width: 520px) {
         .bank-books {
           max-height: 300px;
@@ -1162,6 +1258,14 @@
       <div class="maker-bar">
         <span class="spark" aria-hidden="true">✦</span>
         乐智托管 · 亓老师制作
+      </div>
+
+      <div class="sync-bar">
+        <span class="sync-dot" id="syncDot"></span>
+        <span id="syncText">云同步未开启</span>
+        <button class="btn link sync-open" id="btnSyncOpen" type="button">
+          开启
+        </button>
       </div>
 
       <!-- 1. 选词 -->
@@ -1482,6 +1586,70 @@
           复习时答对同一个错词两次，会自动移出错题本；建议每周复习一次。
         </p>
       </section>
+
+      <!-- 6. 云同步 -->
+      <section class="card" id="viewSync" hidden>
+        <div class="row between">
+          <h2>云同步</h2>
+          <button class="btn secondary sm" id="btnSyncBack" type="button">
+            返回
+          </button>
+        </div>
+        <p class="lead" style="margin-top: 0">
+          用同一个同步码，在手机、平板、电脑之间同步学员名单、历史记录和错题本。
+        </p>
+
+        <div id="syncOff">
+          <div class="row actions" style="justify-content: flex-start; margin-top: 0">
+            <button class="btn primary" id="btnSyncCreate" type="button">
+              生成新的同步码
+            </button>
+          </div>
+          <div class="sync-or"><span>或连接已有同步码</span></div>
+          <div class="manage-row">
+            <input
+              id="syncCodeInput"
+              type="text"
+              autocomplete="off"
+              autocapitalize="off"
+              spellcheck="false"
+              placeholder="粘贴其他设备上的同步码"
+              aria-label="已有同步码"
+            />
+            <button class="btn secondary" id="btnSyncConnect" type="button">
+              连接
+            </button>
+          </div>
+          <p class="footnote">
+            同步码相当于密码，请妥善保存；知道同步码的人都能查看和修改这些数据。
+          </p>
+        </div>
+
+        <div id="syncOn" hidden>
+          <div class="sync-code-box">
+            <span>同步码</span>
+            <code id="syncCodeShow"></code>
+            <button class="btn link" id="btnCopyCode" type="button">复制</button>
+          </div>
+          <div class="sync-status-line">
+            <span>状态：<b id="syncStatusText">等待同步</b></span>
+            <span id="syncTimeText"></span>
+          </div>
+          <div class="row actions">
+            <button class="btn primary" id="btnSyncNow" type="button">
+              立即同步
+            </button>
+            <button class="btn ghost" id="btnSyncDisconnect" type="button">
+              退出同步
+            </button>
+          </div>
+          <p class="footnote">
+            新设备打开本页 → 云同步 → 输入同一个同步码即可。名单、历史和错题本会自动上传；换设备前建议点一次「立即同步」。
+          </p>
+        </div>
+
+        <div class="warn" id="syncError" hidden></div>
+      </section>
     </div>
 
     <script src="words.js?v=20261118b"></script>
@@ -1489,6 +1657,7 @@
     <script src="parser.js?v=20261118b"></script>
     <script src="quiz.js?v=20261118b"></script>
     <script src="students.js?v=20261118b"></script>
+    <script src="sync.js?v=20261118c"></script>
     <script>
       (function () {
         'use strict';
@@ -1496,6 +1665,7 @@
         var P = window.VocabParser;
         var Q = window.VocabQuiz;
         var SB = window.StudentBook;
+        var SY = window.VocabSync;
 
         var HISTORY_KEY = 'vocabDrill.history.v1';
         var DRAFT_KEY = 'vocabDrill.draft.v1';
@@ -1503,6 +1673,7 @@
         var STUDENTS_KEY = 'vocabDrill.students.v1';
         var MISTAKE_KEY = 'vocabDrill.mistakes.v1';
         var SELECTED_KEY = 'vocabDrill.selectedStudent.v1';
+        var SYNC_KEY = 'vocabDrill.sync.v1';
         var MAX_HISTORY = 50;
         var SAMPLE = [
           'apple 苹果',
@@ -1527,6 +1698,16 @@
         var mistakeBook = loadMistakes();
         var currentStudent = '';
         var sessionReview = false;
+
+        var syncState = loadSyncState();
+        var syncBusy = false;
+        var syncDirty = false;
+        var syncTimer = null;
+        var syncStatus = syncState ? 'idle' : 'off';
+        var syncLastAt = (syncState && syncState.lastAt) || '';
+        var syncErrorText = '';
+        var applyingRemote = false;
+        var syncReturn = 'setup';
 
         var BANK_KEY = 'vocabDrill.bank.v1';
         var bank = window.VocabBank || { books: [], units: [] };
@@ -1557,6 +1738,7 @@
             result: 'viewResult',
             history: 'viewHistory',
             review: 'viewReview',
+            sync: 'viewSync',
           };
           Object.keys(map).forEach(function (key) {
             $(map[key]).hidden = key !== name;
@@ -1857,6 +2039,7 @@
           } catch (e) {
             /* 隐私模式等场景下忽略 */
           }
+          scheduleSync();
         }
 
         function refreshHistoryBadge() {
@@ -1918,6 +2101,7 @@
           } catch (e) {
             /* ignore */
           }
+          scheduleSync();
         }
 
         function loadMistakes() {
@@ -1935,6 +2119,7 @@
           } catch (e) {
             /* ignore */
           }
+          scheduleSync();
         }
 
         function saveSelectedStudent(name) {
@@ -1944,6 +2129,292 @@
           } catch (e) {
             /* ignore */
           }
+        }
+
+        /* ---------- 云同步 ---------- */
+
+        function loadSyncState() {
+          try {
+            var raw = JSON.parse(localStorage.getItem(SYNC_KEY) || 'null');
+            if (raw && typeof raw.code === 'string') {
+              var code = SY.normalizeCode(raw.code);
+              if (code.length >= 16) {
+                return {
+                  code: code,
+                  revision: typeof raw.revision === 'number' ? raw.revision : null,
+                  lastAt: typeof raw.lastAt === 'string' ? raw.lastAt : '',
+                };
+              }
+            }
+          } catch (e) {
+            /* ignore */
+          }
+          return null;
+        }
+
+        function saveSyncState() {
+          try {
+            if (!syncState) localStorage.removeItem(SYNC_KEY);
+            else localStorage.setItem(SYNC_KEY, JSON.stringify(syncState));
+          } catch (e) {
+            /* ignore */
+          }
+        }
+
+        function localPayload() {
+          return SY.buildPayload({
+            students: students,
+            history: loadHistory(),
+            mistakes: mistakeBook,
+          });
+        }
+
+        function syncHasLocalData() {
+          if (students.length) return true;
+          if (loadHistory().length) return true;
+          return Object.keys(mistakeBook).some(function (name) {
+            return Array.isArray(mistakeBook[name]) && mistakeBook[name].length > 0;
+          });
+        }
+
+        function friendlySyncError(err) {
+          if (err && err.name === 'AbortError') return '网络超时，请检查网络后重试';
+          var msg = String((err && err.message) || '');
+          if (/failed to fetch|networkerror|load failed|network request failed/i.test(msg)) {
+            return '无法连接同步服务，请检查网络后重试';
+          }
+          return msg || '同步失败，请稍后重试';
+        }
+
+        function setSyncStatus(status, message) {
+          syncStatus = status;
+          syncErrorText = message || '';
+          if (status === 'synced') {
+            syncLastAt = new Date().toISOString();
+            if (syncState) {
+              syncState.lastAt = syncLastAt;
+              saveSyncState();
+            }
+          }
+          updateSyncBar();
+          renderSyncView();
+        }
+
+        function updateSyncBar() {
+          var dot = $('syncDot');
+          var text = $('syncText');
+          var open = $('btnSyncOpen');
+          if (!dot) return;
+          dot.className = 'sync-dot';
+          if (!syncState) {
+            text.textContent = '云同步未开启';
+            open.textContent = '开启';
+            return;
+          }
+          open.textContent = '管理';
+          if (syncStatus === 'syncing') {
+            dot.classList.add('busy');
+            text.textContent = '正在同步…';
+          } else if (syncStatus === 'error') {
+            dot.classList.add('err');
+            text.textContent = '同步失败 · 点击查看';
+          } else {
+            dot.classList.add('on');
+            text.textContent = syncLastAt
+              ? '已同步 · ' + fmtDate(syncLastAt)
+              : '云同步已开启';
+          }
+        }
+
+        function renderSyncView() {
+          var on = !!syncState;
+          $('syncOff').hidden = on;
+          $('syncOn').hidden = !on;
+          $('syncError').hidden = !syncErrorText;
+          $('syncError').textContent = syncErrorText;
+          $('btnSyncCreate').disabled = syncBusy;
+          $('btnSyncConnect').disabled = syncBusy;
+          $('syncCodeInput').disabled = syncBusy;
+          if (!on) return;
+
+          $('syncCodeShow').textContent = SY.formatCode(syncState.code);
+          var labels = {
+            idle: '等待同步',
+            syncing: '正在同步…',
+            synced: '已同步',
+            error: '同步失败',
+          };
+          $('syncStatusText').textContent = labels[syncStatus] || '等待同步';
+          $('syncTimeText').textContent = syncLastAt
+            ? '上次同步：' + fmtDate(syncLastAt)
+            : '尚未同步';
+          $('btnSyncNow').disabled = syncBusy;
+          $('btnSyncDisconnect').disabled = syncBusy;
+        }
+
+        function applyRemotePayload(payload) {
+          if (!payload) return;
+          applyingRemote = true;
+          try {
+            try {
+              students = payload.students.slice();
+              mistakeBook = payload.mistakes || {};
+              localStorage.setItem(STUDENTS_KEY, JSON.stringify(students));
+              localStorage.setItem(MISTAKE_KEY, JSON.stringify(mistakeBook));
+              localStorage.setItem(
+                HISTORY_KEY,
+                JSON.stringify((payload.history || []).slice(0, MAX_HISTORY))
+              );
+            } catch (e) {
+              /* ignore */
+            }
+            var keep = $('studentSelect').value;
+            refreshStudentSelects(keep);
+            renderRoster();
+            updateMistakeBadges();
+            refreshHistoryBadge();
+            if (currentView === 'history') renderHistory();
+          } finally {
+            applyingRemote = false;
+          }
+        }
+
+        function scheduleSync() {
+          if (!syncState || applyingRemote) return;
+          syncDirty = true;
+          if (syncTimer) clearTimeout(syncTimer);
+          syncTimer = setTimeout(function () {
+            syncTimer = null;
+            if (!syncState) return;
+            if (syncBusy) {
+              scheduleSync();
+              return;
+            }
+            pushLocal();
+          }, 1200);
+        }
+
+        function pushLocal() {
+          if (!syncState || syncBusy) return Promise.resolve();
+          var stateAtStart = syncState;
+          syncBusy = true;
+          syncDirty = false;
+          setSyncStatus('syncing');
+          return SY.push(stateAtStart.code, localPayload(), stateAtStart.revision)
+            .then(function (res) {
+              syncBusy = false;
+              if (syncState !== stateAtStart) return;
+              if (res.revision) syncState.revision = res.revision;
+              setSyncStatus('synced');
+              if (syncDirty) scheduleSync();
+            })
+            .catch(function (err) {
+              syncBusy = false;
+              if (syncState !== stateAtStart) return;
+              if (SY.isConflict(err)) return resolveSyncConflict();
+              setSyncStatus('error', friendlySyncError(err));
+            });
+        }
+
+        function resolveSyncConflict() {
+          if (!syncState || syncBusy) return Promise.resolve();
+          var code = syncState.code;
+          syncBusy = true;
+          setSyncStatus('syncing');
+          return SY.pull(code)
+            .then(function (res) {
+              if (!res) {
+                syncBusy = false;
+                syncState.revision = null;
+                return pushLocal();
+              }
+              var merged = SY.mergePayload(localPayload(), res.payload);
+              return SY.push(code, merged, res.revision).then(function (out) {
+                syncBusy = false;
+                if (syncState && syncState.code === code) {
+                  syncState.revision = out.revision;
+                  applyRemotePayload(merged);
+                  setSyncStatus('synced');
+                }
+              });
+            })
+            .catch(function (err) {
+              syncBusy = false;
+              setSyncStatus('error', friendlySyncError(err));
+            });
+        }
+
+        function manualSync() {
+          if (!syncState || syncBusy) return;
+          if (syncDirty) {
+            if (syncTimer) {
+              clearTimeout(syncTimer);
+              syncTimer = null;
+            }
+            syncBusy = false;
+            pushLocal();
+            return;
+          }
+          var code = syncState.code;
+          syncBusy = true;
+          setSyncStatus('syncing');
+          SY.pull(code)
+            .then(function (res) {
+              if (res) {
+                syncBusy = false;
+                if (!syncState || syncState.code !== code) return;
+                syncState.revision = res.revision;
+                applyRemotePayload(res.payload);
+                setSyncStatus('synced');
+                return;
+              }
+              return SY.push(code, localPayload(), null).then(function (out) {
+                syncBusy = false;
+                if (!syncState || syncState.code !== code) return;
+                syncState.revision = out.revision;
+                setSyncStatus('synced');
+              });
+            })
+            .catch(function (err) {
+              syncBusy = false;
+              if (SY.isConflict(err)) return resolveSyncConflict();
+              setSyncStatus('error', friendlySyncError(err));
+            });
+        }
+
+        function initSync() {
+          updateSyncBar();
+          renderSyncView();
+          if (!syncState) return;
+          var code = syncState.code;
+          syncBusy = true;
+          setSyncStatus('syncing');
+          SY.pull(code)
+            .then(function (res) {
+              if (!syncState || syncState.code !== code) return;
+              if (res) {
+                applyRemotePayload(res.payload);
+                syncState.revision = res.revision;
+                syncBusy = false;
+                setSyncStatus('synced');
+                return;
+              }
+              return SY.push(code, localPayload(), null).then(function (out) {
+                syncState.revision = out.revision;
+                syncBusy = false;
+                setSyncStatus('synced');
+              });
+            })
+            .catch(function (err) {
+              syncBusy = false;
+              setSyncStatus('error', friendlySyncError(err));
+            });
+        }
+
+        function openSync() {
+          if (currentView !== 'sync') syncReturn = currentView;
+          renderSyncView();
+          showView('sync');
         }
 
         function studentNameValue() {
@@ -2997,6 +3468,134 @@
           }
           renderHistory();
           refreshHistoryBadge();
+          scheduleSync();
+        });
+
+        /* ---------- 云同步交互 ---------- */
+
+        $('btnSyncOpen').addEventListener('click', openSync);
+
+        $('btnSyncBack').addEventListener('click', function () {
+          showView(syncReturn);
+        });
+
+        $('btnSyncCreate').addEventListener('click', function () {
+          if (syncBusy) return;
+          if (
+            syncHasLocalData() &&
+            !window.confirm('生成同步码后，本机的名单、历史和错题本会上传到云端。继续？')
+          ) {
+            return;
+          }
+          syncState = { code: SY.generateCode(), revision: null, lastAt: '' };
+          saveSyncState();
+          syncErrorText = '';
+          pushLocal();
+        });
+
+        function connectSync() {
+          if (syncBusy) return;
+          var code = SY.normalizeCode($('syncCodeInput').value);
+          if (code.length < 16) {
+            syncErrorText = '同步码格式不对，请检查后重试（至少 16 位）';
+            renderSyncView();
+            return;
+          }
+          var previous = syncState;
+          syncBusy = true;
+          syncErrorText = '';
+          setSyncStatus('syncing');
+          SY.pull(code)
+            .then(function (res) {
+              if (res) {
+                if (
+                  syncHasLocalData() &&
+                  !window.confirm(
+                    '连接后会用云端的名单、历史和错题本覆盖本机数据，继续？'
+                  )
+                ) {
+                  syncBusy = false;
+                  setSyncStatus(previous ? 'idle' : 'off');
+                  return;
+                }
+                syncState = { code: code, revision: res.revision, lastAt: '' };
+                saveSyncState();
+                applyRemotePayload(res.payload);
+                $('syncCodeInput').value = '';
+                syncBusy = false;
+                setSyncStatus('synced');
+                return;
+              }
+              if (
+                !window.confirm('这个同步码还没有云端数据，是否用本机数据创建？')
+              ) {
+                syncBusy = false;
+                setSyncStatus(previous ? 'idle' : 'off');
+                return;
+              }
+              syncState = { code: code, revision: null, lastAt: '' };
+              saveSyncState();
+              syncBusy = false;
+              pushLocal();
+            })
+            .catch(function (err) {
+              syncBusy = false;
+              setSyncStatus('error', friendlySyncError(err));
+            });
+        }
+
+        $('btnSyncConnect').addEventListener('click', connectSync);
+        $('syncCodeInput').addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            connectSync();
+          }
+        });
+
+        $('btnSyncNow').addEventListener('click', manualSync);
+
+        $('btnSyncDisconnect').addEventListener('click', function () {
+          if (!syncState) return;
+          if (!window.confirm('退出云同步？本机数据会保留，但不再自动上传。')) return;
+          if (syncTimer) {
+            clearTimeout(syncTimer);
+            syncTimer = null;
+          }
+          syncState = null;
+          syncDirty = false;
+          saveSyncState();
+          setSyncStatus('off');
+        });
+
+        $('btnCopyCode').addEventListener('click', function () {
+          if (!syncState) return;
+          var text = syncState.code;
+          var btn = this;
+          var done = function () {
+            btn.textContent = '已复制';
+            setTimeout(function () {
+              btn.textContent = '复制';
+            }, 1500);
+          };
+          var fallback = function () {
+            try {
+              var range = document.createRange();
+              range.selectNodeContents($('syncCodeShow'));
+              var sel = window.getSelection();
+              sel.removeAllRanges();
+              sel.addRange(range);
+              document.execCommand('copy');
+              sel.removeAllRanges();
+              done();
+            } catch (e) {
+              window.prompt('请手动复制同步码', text);
+            }
+          };
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(done, fallback);
+          } else {
+            fallback();
+          }
         });
 
         document.addEventListener('keydown', function (e) {
@@ -3053,6 +3652,7 @@
         updateMistakeBadges();
         setTab('bank');
         showView('setup');
+        initSync();
       })();
     </script>
   </body>

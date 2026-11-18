@@ -47,6 +47,7 @@ take off 起飞；脱下
 - 错题本可按学员查看、单个移除或清空；点「复习错题」直接生成该学员的错词练习
 - 复习时同一个词连续答对两次会自动移出错题本；设置页会提示该学员还有多少错词待复习
 - 历史记录可按学员筛选
+- 可选云同步：同一个同步码，在多台手机/平板/电脑之间同步名单、历史和错题本
 - 答对后约 0.75 秒自动进入下一题；答错/跳过会停留，方便看正确答案
 - `Enter` 确认 / 下一个，`Esc` 跳过
 - 可打乱顺序；内置词库可整册、按单元、按单元内单词起止范围选词，也可随机抽取 N 个词
@@ -54,6 +55,21 @@ take off 起飞；脱下
 - 错词和跳过词汇总，可「再练错词」
 - 历史记录保存在浏览器 `localStorage`（最多 50 次），可展开查看每轮错词
 - 粘贴内容会自动存草稿，刷新不丢
+
+## 云同步（可选）
+
+不开启时，所有数据只在本机浏览器里，换设备需要重新导入名单。
+
+开启后，名单、历史记录、错题本会自动上传；在新设备打开页面，输入同一个同步码即可拉取。
+
+1. 点页面顶部「云同步」→「生成新的同步码」；
+2. 复制同步码保存好（它相当于密码）；
+3. 另一台设备打开同一页面 →「云同步」→ 粘贴同步码 →「连接」；
+4. 之后每次打开会先从云端读取；名单、历史或错题发生变化后约 1 秒自动上传。
+
+实现方式：前端只请求 Cloudflare Pages 的 `/api/sync`，由它转发到 Supabase；数据库表只允许通过两个带同步码的 RPC 读写，不能匿名遍历。同步码为 25 位随机字符，知道同步码的人都能查看和修改对应数据，请勿公开。
+
+部署中转：把本仓库接入 Cloudflare Pages，项目名 `vocab-drill-sync`，构建命令留空、输出目录 `.`；数据库结构见 `supabase/schema.sql`。客户端默认请求 `https://vocab-drill-sync.pages.dev/api/sync`，在 Pages 域名下访问时自动改用同源 `/api/sync`。
 
 ## 文件
 
@@ -65,6 +81,9 @@ take off 起飞；脱下
 | `parser.js` | 单词表解析、答案归一化与判定 |
 | `quiz.js` | 出题顺序、答题状态与统计 |
 | `students.js` | 学员名单与错题本的数据处理 |
+| `sync.js` | 云同步客户端：同步码、负载合并、拉取与上传 |
+| `supabase/schema.sql` | Supabase 表结构与 RPC |
+| `functions/api/sync.js` | Cloudflare Pages 同步中转 |
 | `*.test.js` | Node 内置测试 |
 
 ## 测试
@@ -75,4 +94,6 @@ node --test "vocab-drill/*.test.js"
 
 ## 数据说明
 
-答题记录、单元勾选与单词范围、粘贴草稿、学员名单与错题本只存在当前浏览器的 `localStorage` 中（键：`vocabDrill.history.v1`、`vocabDrill.bank.v1`、`vocabDrill.draft.v1`、`vocabDrill.students.v1`、`vocabDrill.mistakes.v1`、`vocabDrill.selectedStudent.v1`），不会上传到任何服务器。
+答题记录、单元勾选与单词范围、粘贴草稿、学员名单与错题本默认只存在当前浏览器的 `localStorage` 中（键：`vocabDrill.history.v1`、`vocabDrill.bank.v1`、`vocabDrill.draft.v1`、`vocabDrill.students.v1`、`vocabDrill.mistakes.v1`、`vocabDrill.selectedStudent.v1`、`vocabDrill.sync.v1`）。
+
+开启云同步后，学员名单、历史记录和错题本会通过 Cloudflare Pages 中转保存到 Supabase；单元选择、草稿和当前选中的学员仍只在本机。同步码保存在 `vocabDrill.sync.v1`，退出同步会删除本机的同步码和版本号，但不会删除本机数据或云端数据。
