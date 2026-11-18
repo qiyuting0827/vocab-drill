@@ -2207,6 +2207,12 @@
           if (!dot) return;
           dot.className = 'sync-dot';
           if (!syncState) {
+            if (syncBusy) {
+              dot.classList.add('busy');
+              text.textContent = '正在连接…';
+              open.textContent = '管理';
+              return;
+            }
             text.textContent = '云同步未开启';
             open.textContent = '开启';
             return;
