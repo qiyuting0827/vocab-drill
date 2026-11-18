@@ -67,9 +67,9 @@ take off 起飞；脱下
 3. 另一台设备打开同一页面 →「云同步」→ 粘贴同步码 →「连接」；
 4. 之后每次打开会先从云端读取；名单、历史或错题发生变化后约 1 秒自动上传。
 
-实现方式：前端只请求 Cloudflare Pages 的 `/api/sync`，由它转发到 Supabase；数据库表只允许通过两个带同步码的 RPC 读写，不能匿名遍历。同步码为 25 位随机字符，知道同步码的人都能查看和修改对应数据，请勿公开。
+实现方式：前端只请求 Netlify Function `/.netlify/functions/sync`，由它转发到 Supabase；数据库表只允许通过两个带同步码的 RPC 读写，不能匿名遍历。同步码为 25 位随机字符，知道同步码的人都能查看和修改对应数据，请勿公开。
 
-部署中转：把本仓库接入 Cloudflare Pages，项目名 `vocab-drill-sync`，构建命令留空、输出目录 `.`；数据库结构见 `supabase/schema.sql`。客户端默认请求 `https://vocab-drill-sync.pages.dev/api/sync`，在 Pages 域名下访问时自动改用同源 `/api/sync`。
+部署中转：把本仓库接入 Netlify（`netlify.toml` 已配置好构建命令 `exit 0`、发布目录 `.`、函数目录 `netlify/functions`），站点名使用 `vocab-drill-sync`；数据库结构见 `supabase/schema.sql`。在 Netlify 域名下访问时，客户端自动请求同源 `/.netlify/functions/sync`。
 
 ## 文件
 
@@ -83,7 +83,8 @@ take off 起飞；脱下
 | `students.js` | 学员名单与错题本的数据处理 |
 | `sync.js` | 云同步客户端：同步码、负载合并、拉取与上传 |
 | `supabase/schema.sql` | Supabase 表结构与 RPC |
-| `functions/api/sync.js` | Cloudflare Pages 同步中转 |
+| `netlify/functions/sync.js` | Netlify 同步中转 |
+| `netlify.toml` | Netlify 构建与函数目录配置 |
 | `*.test.js` | Node 内置测试 |
 
 ## 测试

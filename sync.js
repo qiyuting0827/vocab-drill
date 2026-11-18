@@ -9,7 +9,7 @@
 })(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
-  var DEFAULT_ENDPOINT = 'https://vocab-drill-sync.pages.dev/api/sync';
+  var DEFAULT_ENDPOINT = 'https://vocab-drill-sync.netlify.app/.netlify/functions/sync';
   var ALPHABET = 'abcdefghjkmnpqrstuvwxyz23456789';
   var MAX_HISTORY = 50;
 
@@ -17,8 +17,8 @@
     var g = typeof globalThis !== 'undefined' ? globalThis : null;
     if (g && g.VOCAB_SYNC_ENDPOINT) return g.VOCAB_SYNC_ENDPOINT;
     try {
-      if (typeof location !== 'undefined' && /(^|\.)pages\.dev$/.test(location.hostname)) {
-        return '/api/sync';
+      if (typeof location !== 'undefined' && /(^|\.)netlify\.app$/.test(location.hostname)) {
+        return '/.netlify/functions/sync';
       }
     } catch (e) {
       /* ignore */
