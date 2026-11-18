@@ -31,6 +31,7 @@
     });
     if (opts.shuffle !== false) shuffle(queue);
     return {
+      student: opts.student ? String(opts.student).trim() : '',
       queue: queue,
       index: 0,
       phase: 'answering', // answering | feedback | done
@@ -106,6 +107,7 @@
     });
 
     return {
+      student: session.student || '',
       total: total,
       correct: correct,
       wrong: wrong,

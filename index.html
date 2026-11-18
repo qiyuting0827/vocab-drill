@@ -283,6 +283,39 @@
         color: var(--muted);
       }
 
+      .student-field {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin: 0 0 16px;
+      }
+      .student-field label {
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .student-field input {
+        flex: 1 1 180px;
+        max-width: 260px;
+        padding: 9px 12px;
+        border-radius: 10px;
+        border: 1.5px solid var(--line);
+        background: var(--bg);
+        color: var(--text);
+        font: inherit;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.15s;
+      }
+      .student-field input:focus {
+        border-color: var(--primary);
+      }
+      .student-field .hint {
+        margin-left: auto;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
       .progress {
         height: 6px;
         border-radius: 99px;
@@ -302,9 +335,30 @@
         align-items: center;
         justify-content: space-between;
         gap: 10px;
+        flex-wrap: wrap;
         font-size: 13px;
         color: var(--muted);
         margin: 10px 2px 14px;
+      }
+      .progress-left {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .student-chip {
+        display: inline-block;
+        max-width: 150px;
+        padding: 2px 9px;
+        border-radius: 99px;
+        background: var(--primary-weak);
+        color: var(--primary);
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        vertical-align: middle;
       }
       .prompt-card {
         text-align: center;
@@ -387,6 +441,11 @@
       h2 {
         font-size: 19px;
         margin: 0;
+      }
+      .result-sub {
+        margin: 6px 0 0;
+        font-size: 13.5px;
+        color: var(--muted);
       }
       h3 {
         font-size: 15px;
@@ -494,6 +553,28 @@
       }
       .pill {
         font-size: 12px;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .s-who {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        min-width: 0;
+      }
+      .s-name {
+        font-weight: 600;
+        max-width: 7em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .s-name.none {
+        color: var(--muted);
+        font-weight: 500;
+      }
+      .s-date {
+        font-size: 12.5px;
         color: var(--muted);
         white-space: nowrap;
       }
@@ -726,6 +807,13 @@
         .card {
           padding: 18px 16px;
         }
+        .student-field input {
+          max-width: none;
+        }
+        .student-field .hint {
+          margin-left: 0;
+          width: 100%;
+        }
         .stats {
           grid-template-columns: repeat(2, 1fr);
         }
@@ -762,6 +850,19 @@
         <p class="lead">
           勾选单元、按需调整单词范围，或粘贴自己的词表。练习时只显示中文，你来填英文。
         </p>
+
+        <div class="student-field">
+          <label for="studentName">学员姓名</label>
+          <input
+            id="studentName"
+            type="text"
+            maxlength="20"
+            autocomplete="off"
+            placeholder="填写名字"
+            aria-describedby="studentHint"
+          />
+          <span class="hint" id="studentHint">必填，会记入历史记录</span>
+        </div>
 
         <div class="seg" role="tablist" aria-label="词库来源">
           <button
@@ -856,7 +957,10 @@
       <section id="viewPractice" hidden>
         <div class="progress"><i id="progressBar"></i></div>
         <div class="progress-row">
-          <span id="progressText">第 1 / 1 题</span>
+          <span class="progress-left">
+            <span id="progressText">第 1 / 1 题</span>
+            <span class="student-chip" id="studentText" hidden></span>
+          </span>
           <span>
             <span id="modeText">全部单词</span>
             <button class="btn ghost" id="btnQuit" type="button">退出</button>
@@ -895,6 +999,7 @@
       <!-- 3. 结果 -->
       <section class="card" id="viewResult" hidden>
         <h2 id="resultTitle">本轮完成</h2>
+        <p class="result-sub" id="resultSub" hidden></p>
         <div class="stats">
           <div class="stat"><strong id="statCorrect">0</strong><span>正确</span></div>
           <div class="stat"><strong id="statWrong">0</strong><span>错误</span></div>
@@ -942,6 +1047,7 @@
 
         var HISTORY_KEY = 'vocabDrill.history.v1';
         var DRAFT_KEY = 'vocabDrill.draft.v1';
+        var STUDENT_KEY = 'vocabDrill.student.v1';
         var MAX_HISTORY = 50;
         var SAMPLE = [
           'apple 苹果',
@@ -1229,7 +1335,7 @@
           } else {
             n = parsed.items.length;
           }
-          btn.disabled = n === 0;
+          btn.disabled = n === 0 || !studentNameValue();
           btn.textContent = n ? '开始默写（' + n + ' 词）' : '开始默写';
         }
 
@@ -1261,6 +1367,7 @@
         function saveHistoryRecord(sum) {
           var record = {
             at: new Date().toISOString(),
+            student: sum.student || '',
             mode: modeLabel || '全部单词',
             total: sum.total,
             correct: sum.correct,
@@ -1308,6 +1415,18 @@
           }
         }
 
+        function studentNameValue() {
+          return $('studentName').value.trim().replace(/\s+/g, ' ');
+        }
+
+        function saveStudentName(value) {
+          try {
+            localStorage.setItem(STUDENT_KEY, value);
+          } catch (e) {
+            /* ignore */
+          }
+        }
+
         /* ---------- 单词表预览 ---------- */
 
         var parseTimer = null;
@@ -1342,13 +1461,18 @@
 
         /* ---------- 默写流程 ---------- */
 
-        function startSession(items, mode) {
+        function startSession(items, mode, student) {
           if (!items || !items.length) return;
           clearAutoNext();
           modeLabel = mode || '全部单词';
-          session = Q.createSession(items, { shuffle: $('optShuffle').checked });
+          session = Q.createSession(items, {
+            shuffle: $('optShuffle').checked,
+            student: student || '',
+          });
           summary = null;
           $('modeText').textContent = modeLabel;
+          $('studentText').textContent = session.student ? '学员 ' + session.student : '';
+          $('studentText').hidden = !session.student;
           showView('practice');
           renderCurrent();
         }
@@ -1455,6 +1579,12 @@
           saveHistoryRecord(summary);
 
           $('resultTitle').textContent = summary.accuracy === 1 ? '🎉 全对！' : '本轮完成';
+          $('resultSub').hidden = false;
+          $('resultSub').textContent =
+            (summary.student ? '学员：' + summary.student : '未填写学员姓名') +
+            ' · 共 ' +
+            summary.total +
+            ' 题';
           $('statCorrect').textContent = String(summary.correct);
           $('statWrong').textContent = String(summary.wrong);
           $('statSkipped').textContent = String(summary.skipped);
@@ -1543,10 +1673,19 @@
                 rec.wrong +
                 ' · 跳过 ' +
                 rec.skipped;
-              return (
-                '<details class="session"><summary><span>' +
+              var name = rec.student ? String(rec.student) : '';
+              var who =
+                '<span class="s-who"><span class="s-name' +
+                (name ? '' : ' none') +
+                '">' +
+                esc(name || '未填姓名') +
+                '</span><span class="s-date">' +
                 esc(fmtDate(rec.at)) +
-                '</span><span class="pill">' +
+                '</span></span>';
+              return (
+                '<details class="session"><summary>' +
+                who +
+                '<span class="pill">' +
                 esc(rec.mode || '全部单词') +
                 ' · ' +
                 esc(pill) +
@@ -1652,6 +1791,11 @@
           updateStartButton();
         });
 
+        $('studentName').addEventListener('input', function () {
+          saveStudentName(this.value.trim());
+          updateStartButton();
+        });
+
         $('inputWords').addEventListener('input', function () {
           writeDraft(this.value);
           schedulePreview();
@@ -1668,10 +1812,10 @@
           if (setupTab === 'bank') {
             var items = effectiveBankItems();
             if (!items.length) return;
-            startSession(items, bankModeLabel());
+            startSession(items, bankModeLabel(), studentNameValue());
           } else {
             refreshPreview();
-            startSession(parsed.items, '自定义词表');
+            startSession(parsed.items, '自定义词表', studentNameValue());
           }
         });
 
@@ -1703,7 +1847,7 @@
             seen[key] = true;
             items.push({ en: m.en, zh: m.zh, answers: m.answers });
           });
-          startSession(items, '错词重练');
+          startSession(items, '错词重练', session ? session.student : '');
         });
 
         $('btnRestart').addEventListener('click', function () {
@@ -1754,6 +1898,11 @@
 
         var draft = readDraft();
         if (draft) $('inputWords').value = draft;
+        try {
+          $('studentName').value = localStorage.getItem(STUDENT_KEY) || '';
+        } catch (e) {
+          /* ignore */
+        }
         renderBank();
         refreshPreview();
         refreshHistoryBadge();

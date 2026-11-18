@@ -71,3 +71,10 @@ test('正确率按总题数计算', () => {
   Q.next(s);
   assert.equal(Q.summary(s).accuracy, 1 / 3);
 });
+
+test('会话记录学员姓名', () => {
+  const s = Q.createSession(ITEMS, { shuffle: false, student: '  张三  ' });
+  assert.equal(s.student, '张三');
+  assert.equal(Q.summary(s).student, '张三');
+  assert.equal(Q.createSession(ITEMS, { shuffle: false }).student, '');
+});
