@@ -1,0 +1,1109 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="粘贴英汉单词表，看中文默写英文，自动收集错词并保存历史。" />
+    <title>单词默写</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9C%8D%EF%B8%8F%3C/text%3E%3C/svg%3E"
+    />
+    <style>
+      :root {
+        --bg: #f5f6f8;
+        --card: #ffffff;
+        --text: #1c2128;
+        --muted: #6b7280;
+        --line: #e4e7ec;
+        --primary: #2563eb;
+        --primary-weak: #e8f0ff;
+        --ok: #15803d;
+        --ok-weak: #e8f7ee;
+        --bad: #c2410c;
+        --bad-weak: #fdeee6;
+        --shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 8px 24px rgba(15, 23, 42, 0.06);
+        --radius: 16px;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0e1116;
+          --card: #161b22;
+          --text: #e6e9ef;
+          --muted: #98a2b3;
+          --line: #262d38;
+          --primary: #6ea0ff;
+          --primary-weak: #1b2740;
+          --ok: #6ee7a0;
+          --ok-weak: #12301f;
+          --bad: #fca5a5;
+          --bad-weak: #331b16;
+          --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.25);
+        }
+        .btn.primary,
+        .badge {
+          color: #0b1220;
+        }
+        .btn.primary kbd {
+          background: rgba(0, 0, 0, 0.18);
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+          "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+      }
+      .app {
+        max-width: 680px;
+        margin: 0 auto;
+        padding: 20px 16px 40px;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .logo {
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
+        background: var(--primary);
+        color: #fff;
+        display: grid;
+        place-items: center;
+        font-size: 20px;
+      }
+      h1 {
+        font-size: 19px;
+        margin: 0;
+        letter-spacing: 0.4px;
+      }
+      .brand p {
+        margin: 1px 0 0;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .maker-bar {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin: 0 0 14px;
+        padding: 5px 12px;
+        border-radius: 99px;
+        background: var(--primary-weak);
+        color: var(--primary);
+        font-size: 12.5px;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+      }
+      .maker-bar .spark {
+        font-size: 11px;
+        opacity: 0.85;
+      }
+
+      button {
+        font: inherit;
+        cursor: pointer;
+        border: 0;
+        background: none;
+        color: inherit;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        padding: 11px 20px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 15px;
+        transition: background 0.15s, border-color 0.15s, filter 0.15s, transform 0.05s;
+      }
+      .btn:active {
+        transform: translateY(1px);
+      }
+      .btn.primary {
+        background: var(--primary);
+        color: #fff;
+      }
+      .btn.primary:hover {
+        filter: brightness(1.07);
+      }
+      .btn.secondary {
+        background: transparent;
+        border: 1px solid var(--line);
+        color: var(--text);
+      }
+      .btn.secondary:hover {
+        border-color: var(--muted);
+      }
+      .btn.ghost {
+        padding: 6px 10px;
+        border-radius: 9px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .btn.ghost:hover {
+        background: var(--primary-weak);
+        color: var(--primary);
+      }
+      .btn.link {
+        padding: 4px 0;
+        color: var(--primary);
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      kbd {
+        font: inherit;
+        font-size: 11px;
+        padding: 1px 5px;
+        border-radius: 5px;
+        background: rgba(255, 255, 255, 0.24);
+      }
+      .btn.secondary kbd {
+        background: var(--line);
+        color: var(--muted);
+      }
+      .badge {
+        display: inline-block;
+        min-width: 18px;
+        padding: 0 5px;
+        border-radius: 99px;
+        background: var(--primary);
+        color: #fff;
+        font-size: 11px;
+        line-height: 18px;
+        text-align: center;
+      }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 22px;
+        box-shadow: var(--shadow);
+      }
+      .lead {
+        margin: 0 0 14px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      textarea {
+        width: 100%;
+        min-height: 190px;
+        resize: vertical;
+        padding: 14px;
+        border-radius: 12px;
+        border: 1.5px solid var(--line);
+        background: var(--bg);
+        color: var(--text);
+        font: 14px/1.7 ui-monospace, SFMono-Regular, Consolas, "Courier New", monospace;
+        outline: none;
+        transition: border-color 0.15s;
+      }
+      textarea:focus {
+        border-color: var(--primary);
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .row.between {
+        justify-content: space-between;
+      }
+      .row.actions {
+        margin-top: 18px;
+      }
+      .row.actions .btn {
+        flex: 1 1 auto;
+        min-width: 130px;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .small {
+        font-size: 13px;
+      }
+      .options {
+        margin-top: 14px;
+      }
+      label.check {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 14px;
+        color: var(--muted);
+        cursor: pointer;
+        user-select: none;
+      }
+      input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        accent-color: var(--primary);
+      }
+      .warn {
+        margin-top: 10px;
+        padding: 10px 12px;
+        border-radius: 10px;
+        background: var(--bad-weak);
+        color: var(--bad);
+        font-size: 13px;
+      }
+      .footnote {
+        margin: 14px 0 0;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .progress {
+        height: 6px;
+        border-radius: 99px;
+        background: var(--line);
+        overflow: hidden;
+      }
+      .progress > i {
+        display: block;
+        height: 100%;
+        width: 0;
+        background: var(--primary);
+        border-radius: inherit;
+        transition: width 0.25s ease;
+      }
+      .progress-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        font-size: 13px;
+        color: var(--muted);
+        margin: 10px 2px 14px;
+      }
+      .prompt-card {
+        text-align: center;
+        padding-top: 26px;
+      }
+      .prompt-label {
+        font-size: 12px;
+        letter-spacing: 0.14em;
+        color: var(--muted);
+      }
+      .prompt {
+        font-size: clamp(30px, 8vw, 46px);
+        font-weight: 700;
+        line-height: 1.35;
+        padding: 16px 0 4px;
+        word-break: break-word;
+      }
+      input.answer {
+        width: 100%;
+        margin-top: 18px;
+        text-align: center;
+        font-size: 22px;
+        padding: 14px 16px;
+        border-radius: 12px;
+        border: 2px solid var(--line);
+        background: var(--bg);
+        color: var(--text);
+        outline: none;
+        transition: border-color 0.15s;
+      }
+      input.answer:focus {
+        border-color: var(--primary);
+      }
+      input.answer.bad {
+        border-color: var(--bad);
+      }
+      input.answer:disabled {
+        opacity: 0.85;
+      }
+      .feedback {
+        margin-top: 16px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        font-size: 15px;
+        word-break: break-word;
+      }
+      .feedback.ok {
+        background: var(--ok-weak);
+        color: var(--ok);
+      }
+      .feedback.bad {
+        background: var(--bad-weak);
+        color: var(--bad);
+      }
+      .feedback.hint {
+        background: var(--primary-weak);
+        color: var(--primary);
+      }
+      .feedback b {
+        font-size: 17px;
+      }
+      .practice-credit {
+        margin: 14px 0 0;
+        text-align: center;
+        font-size: 12.5px;
+        color: var(--muted);
+        letter-spacing: 0.04em;
+      }
+
+      @keyframes shake {
+        10%, 90% { transform: translateX(-1px); }
+        20%, 80% { transform: translateX(2px); }
+        30%, 50%, 70% { transform: translateX(-3px); }
+        40%, 60% { transform: translateX(3px); }
+      }
+      .shake {
+        animation: shake 0.3s;
+      }
+
+      h2 {
+        font-size: 19px;
+        margin: 0;
+      }
+      h3 {
+        font-size: 15px;
+        margin: 22px 0 10px;
+      }
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin: 18px 0 4px;
+      }
+      .stat {
+        background: var(--bg);
+        border-radius: 12px;
+        padding: 12px 6px;
+        text-align: center;
+      }
+      .stat strong {
+        display: block;
+        font-size: 24px;
+        line-height: 1.2;
+      }
+      .stat span {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .mistakes {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .mistake {
+        padding: 10px 12px;
+        border-radius: 10px;
+        background: var(--bg);
+        border: 1px solid var(--line);
+      }
+      .m-top {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .m-zh {
+        font-weight: 600;
+      }
+      .m-en {
+        color: var(--ok);
+        font-weight: 600;
+        margin-top: 2px;
+      }
+      .m-given {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 2px;
+      }
+      .tag {
+        display: inline-block;
+        font-size: 11px;
+        padding: 1px 7px;
+        border-radius: 99px;
+      }
+      .tag.wrong {
+        background: var(--bad-weak);
+        color: var(--bad);
+      }
+      .tag.skipped {
+        background: var(--primary-weak);
+        color: var(--primary);
+      }
+
+      .history-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 14px;
+      }
+      details.session {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--bg);
+        overflow: hidden;
+      }
+      details.session summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 12px 14px;
+        cursor: pointer;
+        list-style: none;
+        font-size: 14px;
+      }
+      details.session summary::-webkit-details-marker {
+        display: none;
+      }
+      details.session[open] summary {
+        border-bottom: 1px solid var(--line);
+      }
+      .session-body {
+        padding: 12px 14px 14px;
+      }
+      .pill {
+        font-size: 12px;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .empty {
+        color: var(--muted);
+        text-align: center;
+        padding: 26px 0;
+        font-size: 14px;
+        margin: 0;
+      }
+      @media (max-width: 520px) {
+        .card {
+          padding: 18px 16px;
+        }
+        .stats {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        details.session summary {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 3px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <div class="brand">
+          <div class="logo" aria-hidden="true">✍️</div>
+          <div>
+            <h1>单词默写</h1>
+            <p>看中文，写英文</p>
+          </div>
+        </div>
+        <button class="btn ghost" id="btnHistoryTop" type="button">
+          历史记录 <span class="badge" id="historyCount" hidden>0</span>
+        </button>
+      </header>
+
+      <div class="maker-bar">
+        <span class="spark" aria-hidden="true">✦</span>
+        乐智托管 · 亓老师制作
+      </div>
+
+      <!-- 1. 粘贴单词表 -->
+      <section class="card" id="viewSetup">
+        <p class="lead">
+          粘贴「英文 + 中文」的单词表，每行一个。练习时只显示中文，你来填英文。
+        </p>
+        <textarea
+          id="inputWords"
+          spellcheck="false"
+          placeholder="apple 苹果&#10;take off 起飞；脱下&#10;library 图书馆"
+          aria-label="单词表"
+        ></textarea>
+        <div class="row between" style="margin-top: 10px">
+          <span class="muted small" id="parseInfo">还没有识别到单词</span>
+          <button class="btn link" id="btnSample" type="button">填入示例</button>
+        </div>
+        <div class="warn" id="skippedInfo" hidden></div>
+        <div class="row options">
+          <label class="check">
+            <input type="checkbox" id="optShuffle" checked />
+            随机顺序
+          </label>
+        </div>
+        <div class="row actions">
+          <button class="btn primary" id="btnStart" type="button" disabled>
+            开始默写
+          </button>
+        </div>
+        <p class="footnote">
+          支持空格、逗号、Tab、短横线分隔，英文在前或在后都可以；练习记录只保存在本机浏览器。
+        </p>
+      </section>
+
+      <!-- 2. 默写 -->
+      <section id="viewPractice" hidden>
+        <div class="progress"><i id="progressBar"></i></div>
+        <div class="progress-row">
+          <span id="progressText">第 1 / 1 题</span>
+          <span>
+            <span id="modeText">全部单词</span>
+            <button class="btn ghost" id="btnQuit" type="button">退出</button>
+          </span>
+        </div>
+        <div class="card prompt-card">
+          <div class="prompt-label">中文</div>
+          <div class="prompt" id="promptZh"></div>
+          <input
+            class="answer"
+            id="answerInput"
+            type="text"
+            autocomplete="off"
+            autocapitalize="off"
+            autocorrect="off"
+            spellcheck="false"
+            placeholder="在这里输入英文"
+            aria-label="英文答案"
+          />
+          <div class="feedback" id="feedback" hidden></div>
+          <div class="row actions">
+            <button class="btn primary" id="btnSubmit" type="button">
+              确认 <kbd>Enter</kbd>
+            </button>
+            <button class="btn secondary" id="btnSkip" type="button">
+              跳过 <kbd>Esc</kbd>
+            </button>
+            <button class="btn primary" id="btnNext" type="button" hidden>
+              下一个 <kbd>Enter</kbd>
+            </button>
+          </div>
+        </div>
+        <p class="practice-credit">乐智托管 · 亓老师制作</p>
+      </section>
+
+      <!-- 3. 结果 -->
+      <section class="card" id="viewResult" hidden>
+        <h2 id="resultTitle">本轮完成</h2>
+        <div class="stats">
+          <div class="stat"><strong id="statCorrect">0</strong><span>正确</span></div>
+          <div class="stat"><strong id="statWrong">0</strong><span>错误</span></div>
+          <div class="stat"><strong id="statSkipped">0</strong><span>跳过</span></div>
+          <div class="stat"><strong id="statAccuracy">0%</strong><span>正确率</span></div>
+        </div>
+        <div id="mistakeBlock">
+          <h3>需要复习 <span class="muted" id="mistakeCount"></span></h3>
+          <ul class="mistakes" id="mistakeList"></ul>
+        </div>
+        <div class="row actions">
+          <button class="btn primary" id="btnRetryWrong" type="button">再练错词</button>
+          <button class="btn secondary" id="btnRestart" type="button">重新开始</button>
+        </div>
+        <div class="row actions" style="margin-top: 10px">
+          <button class="btn link" id="btnHistoryFromResult" type="button">
+            查看历史记录 →
+          </button>
+        </div>
+      </section>
+
+      <!-- 4. 历史 -->
+      <section class="card" id="viewHistory" hidden>
+        <div class="row between">
+          <h2>历史记录</h2>
+          <button class="btn ghost" id="btnClearHistory" type="button">清空</button>
+        </div>
+        <div class="history-list" id="historyList"></div>
+        <div class="row actions">
+          <button class="btn secondary" id="btnBack" type="button">返回</button>
+        </div>
+      </section>
+    </div>
+
+    <script src="parser.js"></script>
+    <script src="quiz.js"></script>
+    <script>
+      (function () {
+        'use strict';
+
+        var P = window.VocabParser;
+        var Q = window.VocabQuiz;
+
+        var HISTORY_KEY = 'vocabDrill.history.v1';
+        var DRAFT_KEY = 'vocabDrill.draft.v1';
+        var MAX_HISTORY = 50;
+        var SAMPLE = [
+          'apple 苹果',
+          'take off 起飞；脱下',
+          'library 图书馆',
+          'because 因为',
+          'environment 环境',
+          'look after 照顾',
+          'confident 自信的',
+          'improve 提高；改善',
+        ].join('\n');
+
+        var parsed = { items: [], skipped: [] };
+        var session = null;
+        var summary = null;
+        var modeLabel = '';
+        var currentView = 'setup';
+        var historyReturn = 'setup';
+
+        function $(id) {
+          return document.getElementById(id);
+        }
+
+        function esc(s) {
+          return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+          });
+        }
+
+        function showView(name) {
+          currentView = name;
+          var map = {
+            setup: 'viewSetup',
+            practice: 'viewPractice',
+            result: 'viewResult',
+            history: 'viewHistory',
+          };
+          Object.keys(map).forEach(function (key) {
+            $(map[key]).hidden = key !== name;
+          });
+          window.scrollTo(0, 0);
+        }
+
+        /* ---------- 本地存储 ---------- */
+
+        function loadHistory() {
+          try {
+            var raw = localStorage.getItem(HISTORY_KEY);
+            var list = raw ? JSON.parse(raw) : [];
+            return Array.isArray(list) ? list : [];
+          } catch (e) {
+            return [];
+          }
+        }
+
+        function saveHistoryRecord(sum) {
+          var record = {
+            at: new Date().toISOString(),
+            mode: modeLabel || '全部单词',
+            total: sum.total,
+            correct: sum.correct,
+            wrong: sum.wrong,
+            skipped: sum.skipped,
+            mistakes: sum.mistakes.map(function (m) {
+              return {
+                en: m.en,
+                zh: m.zh,
+                answers: m.answers,
+                given: m.given,
+                status: m.status,
+              };
+            }),
+          };
+          try {
+            var list = loadHistory();
+            list.unshift(record);
+            localStorage.setItem(HISTORY_KEY, JSON.stringify(list.slice(0, MAX_HISTORY)));
+          } catch (e) {
+            /* 隐私模式等场景下忽略 */
+          }
+        }
+
+        function refreshHistoryBadge() {
+          var list = loadHistory();
+          var badge = $('historyCount');
+          badge.textContent = String(list.length);
+          badge.hidden = list.length === 0;
+        }
+
+        function readDraft() {
+          try {
+            return localStorage.getItem(DRAFT_KEY) || '';
+          } catch (e) {
+            return '';
+          }
+        }
+
+        function writeDraft(value) {
+          try {
+            localStorage.setItem(DRAFT_KEY, value);
+          } catch (e) {
+            /* ignore */
+          }
+        }
+
+        /* ---------- 单词表预览 ---------- */
+
+        var parseTimer = null;
+
+        function refreshPreview() {
+          parsed = P.parseWordList($('inputWords').value);
+          var n = parsed.items.length;
+
+          $('btnStart').disabled = n === 0;
+          $('btnStart').textContent = n ? '开始默写（' + n + ' 词）' : '开始默写';
+          $('parseInfo').textContent = n ? '已识别 ' + n + ' 个单词' : '还没有识别到单词';
+
+          if (parsed.skipped.length) {
+            var lines = parsed.skipped.slice(0, 3).map(function (s) {
+              return '第 ' + s.lineNo + ' 行';
+            });
+            $('skippedInfo').hidden = false;
+            $('skippedInfo').textContent =
+              '有 ' +
+              parsed.skipped.length +
+              ' 行没有识别（需要同时包含英文和中文）：' +
+              lines.join('、') +
+              (parsed.skipped.length > 3 ? ' 等' : '');
+          } else {
+            $('skippedInfo').hidden = true;
+          }
+        }
+
+        function schedulePreview() {
+          clearTimeout(parseTimer);
+          parseTimer = setTimeout(refreshPreview, 150);
+        }
+
+        /* ---------- 默写流程 ---------- */
+
+        function startSession(items, mode) {
+          if (!items || !items.length) return;
+          modeLabel = mode || '全部单词';
+          session = Q.createSession(items, { shuffle: $('optShuffle').checked });
+          summary = null;
+          $('modeText').textContent = modeLabel;
+          showView('practice');
+          renderCurrent();
+        }
+
+        function renderCurrent() {
+          var item = Q.current(session);
+          if (!item) return;
+
+          var index = session.index;
+          var total = session.queue.length;
+          $('progressText').textContent = '第 ' + (index + 1) + ' / ' + total + ' 题';
+          $('progressBar').style.width = Math.round((index / total) * 100) + '%';
+          $('promptZh').textContent = item.zh;
+
+          var input = $('answerInput');
+          input.value = '';
+          input.disabled = false;
+          input.classList.remove('bad');
+          $('feedback').hidden = true;
+          $('feedback').className = 'feedback';
+          $('feedback').textContent = '';
+          $('btnSubmit').hidden = false;
+          $('btnSkip').hidden = false;
+          $('btnNext').hidden = true;
+          input.focus({ preventScroll: true });
+        }
+
+        function setFeedback(kind, html) {
+          var el = $('feedback');
+          el.className = 'feedback ' + kind;
+          el.innerHTML = html;
+          el.hidden = false;
+        }
+
+        function showNextButton() {
+          $('btnSubmit').hidden = true;
+          $('btnSkip').hidden = true;
+          $('btnNext').hidden = false;
+        }
+
+        function doSubmit() {
+          if (!session || session.phase !== 'answering') return;
+
+          var input = $('answerInput');
+          var rec = Q.submit(session, input.value);
+          if (!rec) return;
+
+          if (rec.status === 'empty') {
+            setFeedback('hint', '先输入英文，或点「跳过」');
+            input.classList.remove('shake');
+            void input.offsetWidth;
+            input.classList.add('shake');
+            input.focus({ preventScroll: true });
+            return;
+          }
+
+          input.disabled = true;
+          if (rec.status === 'correct') {
+            setFeedback('ok', '✓ 正确');
+            input.classList.remove('bad');
+          } else {
+            setFeedback('bad', '✗ 正确答案：<b>' + esc(rec.answers.join(' / ')) + '</b>');
+            input.classList.add('bad');
+          }
+          showNextButton();
+        }
+
+        function doSkip() {
+          if (!session || session.phase !== 'answering') return;
+
+          var rec = Q.skip(session, $('answerInput').value);
+          if (!rec) return;
+
+          $('answerInput').disabled = true;
+          setFeedback('bad', '已跳过 · 正确答案：<b>' + esc(rec.answers.join(' / ')) + '</b>');
+          showNextButton();
+        }
+
+        function doNext() {
+          if (!session || session.phase !== 'feedback') return;
+          if (Q.next(session)) renderCurrent();
+          else finish();
+        }
+
+        function finish() {
+          summary = Q.summary(session);
+          saveHistoryRecord(summary);
+
+          $('resultTitle').textContent = summary.accuracy === 1 ? '🎉 全对！' : '本轮完成';
+          $('statCorrect').textContent = String(summary.correct);
+          $('statWrong').textContent = String(summary.wrong);
+          $('statSkipped').textContent = String(summary.skipped);
+          $('statAccuracy').textContent = Math.round(summary.accuracy * 100) + '%';
+
+          $('mistakeBlock').hidden = summary.mistakes.length === 0;
+          $('btnRetryWrong').hidden = summary.mistakes.length === 0;
+          $('mistakeCount').textContent = summary.mistakes.length
+            ? '（' + summary.mistakes.length + '）'
+            : '';
+          $('mistakeList').innerHTML = summary.mistakes.map(mistakeHtml).join('');
+
+          showView('result');
+          refreshHistoryBadge();
+        }
+
+        function mistakeHtml(m) {
+          var answers = m.answers && m.answers.length ? m.answers : [m.en];
+          var tag =
+            m.status === 'skipped'
+              ? '<span class="tag skipped">跳过</span>'
+              : '<span class="tag wrong">错误</span>';
+          var given = '';
+          if (m.status === 'wrong') {
+            given =
+              '<div class="m-given">你的答案：' + esc(m.given || '（未填）') + '</div>';
+          } else if (m.given) {
+            given = '<div class="m-given">已输入：' + esc(m.given) + '</div>';
+          }
+          return (
+            '<li class="mistake">' +
+            '<div class="m-top"><span class="m-zh">' +
+            esc(m.zh) +
+            '</span>' +
+            tag +
+            '</div>' +
+            '<div class="m-en">' +
+            esc(answers.join(' / ')) +
+            '</div>' +
+            given +
+            '</li>'
+          );
+        }
+
+        /* ---------- 历史记录 ---------- */
+
+        function pad2(n) {
+          return n < 10 ? '0' + n : String(n);
+        }
+
+        function fmtDate(iso) {
+          var d = new Date(iso);
+          if (isNaN(d.getTime())) return String(iso);
+          return (
+            d.getFullYear() +
+            '/' +
+            pad2(d.getMonth() + 1) +
+            '/' +
+            pad2(d.getDate()) +
+            ' ' +
+            pad2(d.getHours()) +
+            ':' +
+            pad2(d.getMinutes())
+          );
+        }
+
+        function renderHistory() {
+          var list = loadHistory();
+          var box = $('historyList');
+          if (!list.length) {
+            box.innerHTML = '<p class="empty">还没有历史记录，先去练一轮吧。</p>';
+            return;
+          }
+          box.innerHTML = list
+            .map(function (rec) {
+              var mistakes = rec.mistakes || [];
+              var body = mistakes.length
+                ? '<ul class="mistakes">' + mistakes.map(mistakeHtml).join('') + '</ul>'
+                : '<p class="muted small" style="margin:0">全对，没有错词 👏</p>';
+              var pill =
+                '正确 ' +
+                rec.correct +
+                ' / ' +
+                rec.total +
+                ' · 错误 ' +
+                rec.wrong +
+                ' · 跳过 ' +
+                rec.skipped;
+              return (
+                '<details class="session"><summary><span>' +
+                esc(fmtDate(rec.at)) +
+                '</span><span class="pill">' +
+                esc(rec.mode || '全部单词') +
+                ' · ' +
+                esc(pill) +
+                '</span></summary><div class="session-body">' +
+                body +
+                '</div></details>'
+              );
+            })
+            .join('');
+        }
+
+        function openHistory(returnTo) {
+          historyReturn = returnTo || 'setup';
+          renderHistory();
+          showView('history');
+        }
+
+        /* ---------- 事件绑定 ---------- */
+
+        $('inputWords').addEventListener('input', function () {
+          writeDraft(this.value);
+          schedulePreview();
+        });
+
+        $('btnSample').addEventListener('click', function () {
+          $('inputWords').value = SAMPLE;
+          writeDraft(SAMPLE);
+          refreshPreview();
+          $('inputWords').focus();
+        });
+
+        $('btnStart').addEventListener('click', function () {
+          refreshPreview();
+          startSession(parsed.items, '全部单词');
+        });
+
+        $('btnSubmit').addEventListener('click', doSubmit);
+        $('btnSkip').addEventListener('click', doSkip);
+        $('btnNext').addEventListener('click', doNext);
+
+        $('btnQuit').addEventListener('click', function () {
+          if (
+            session &&
+            session.results.length &&
+            !window.confirm('退出本轮？本轮的答题记录不会保存。')
+          ) {
+            return;
+          }
+          session = null;
+          refreshPreview();
+          showView('setup');
+        });
+
+        $('btnRetryWrong').addEventListener('click', function () {
+          if (!summary || !summary.mistakes.length) return;
+          var seen = Object.create(null);
+          var items = [];
+          summary.mistakes.forEach(function (m) {
+            var key = m.en.toLowerCase() + '\u0000' + m.zh;
+            if (seen[key]) return;
+            seen[key] = true;
+            items.push({ en: m.en, zh: m.zh, answers: m.answers });
+          });
+          startSession(items, '错词重练');
+        });
+
+        $('btnRestart').addEventListener('click', function () {
+          refreshPreview();
+          showView('setup');
+        });
+
+        $('btnHistoryTop').addEventListener('click', function () {
+          openHistory(currentView === 'history' ? historyReturn : currentView);
+        });
+
+        $('btnHistoryFromResult').addEventListener('click', function () {
+          openHistory('result');
+        });
+
+        $('btnBack').addEventListener('click', function () {
+          showView(historyReturn);
+        });
+
+        $('btnClearHistory').addEventListener('click', function () {
+          if (!window.confirm('确定清空所有历史记录？此操作不可撤销。')) return;
+          try {
+            localStorage.removeItem(HISTORY_KEY);
+          } catch (e) {
+            /* ignore */
+          }
+          renderHistory();
+          refreshHistoryBadge();
+        });
+
+        document.addEventListener('keydown', function (e) {
+          if (currentView !== 'practice' || !session) return;
+          if (e.isComposing || e.keyCode === 229) return;
+
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            if (session.phase === 'answering') doSubmit();
+            else if (session.phase === 'feedback') doNext();
+          } else if (e.key === 'Escape') {
+            if (session.phase === 'answering') {
+              e.preventDefault();
+              doSkip();
+            }
+          }
+        });
+
+        /* ---------- 初始化 ---------- */
+
+        var draft = readDraft();
+        if (draft) $('inputWords').value = draft;
+        refreshPreview();
+        refreshHistoryBadge();
+        showView('setup');
+      })();
+    </script>
+  </body>
+</html>
