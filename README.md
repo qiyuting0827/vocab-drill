@@ -4,7 +4,7 @@
 
 纯静态页面，无需安装、无需构建；本地双击即可离线使用。
 
-线上地址：<https://qiyuting0827.github.io/vocab-drill/>（手机、电脑均可直接打开）
+线上地址：<https://vocab-drill-sync.netlify.app/>（推荐，应用与同步接口同源）；镜像：<https://qiyuting0827.github.io/vocab-drill/>
 
 ## 使用
 
@@ -70,6 +70,32 @@ take off 起飞；脱下
 实现方式：前端只请求 Netlify Function `/.netlify/functions/sync`，由它转发到 Supabase；数据库表只允许通过两个带同步码的 RPC 读写，不能匿名遍历。同步码为 25 位随机字符，知道同步码的人都能查看和修改对应数据，请勿公开。
 
 部署中转：把本仓库接入 Netlify（`netlify.toml` 已配置好构建命令 `exit 0`、发布目录 `.`、函数目录 `netlify/functions`），站点名使用 `vocab-drill-sync`；数据库结构见 `supabase/schema.sql`。在 Netlify 域名下访问时，客户端自动请求同源 `/.netlify/functions/sync`。
+
+## 数据备份与恢复
+
+开启云同步后，云端本身就有一份持续备份：每个同步码对应一份完整快照，本机变化约 1 秒后自动覆盖更新。
+
+本机另存一份（浏览器控制台执行）：
+
+```js
+copy(JSON.stringify({
+  students: JSON.parse(localStorage.getItem('vocabDrill.students.v1') || '[]'),
+  history: JSON.parse(localStorage.getItem('vocabDrill.history.v1') || '[]'),
+  mistakes: JSON.parse(localStorage.getItem('vocabDrill.mistakes.v1') || '{}')
+}, null, 2));
+```
+
+恢复时先把「云同步」退出，再执行下面代码并粘贴备份 JSON，最后刷新页面：
+
+```js
+const d = JSON.parse(prompt('粘贴备份 JSON') || '{}');
+localStorage.setItem('vocabDrill.students.v1', JSON.stringify(d.students || []));
+localStorage.setItem('vocabDrill.history.v1', JSON.stringify(d.history || []));
+localStorage.setItem('vocabDrill.mistakes.v1', JSON.stringify(d.mistakes || {}));
+location.reload();
+```
+
+如果先恢复再退出同步，页面打开时会先从云端拉取并覆盖本机数据。恢复确认后再重新生成或连接同步码上传。
 
 ## 文件
 
