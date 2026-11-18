@@ -1652,12 +1652,12 @@
       </section>
     </div>
 
-    <script src="words.js?v=20261118b"></script>
-    <script src="bank-select.js?v=20261118b"></script>
-    <script src="parser.js?v=20261118b"></script>
-    <script src="quiz.js?v=20261118b"></script>
-    <script src="students.js?v=20261118b"></script>
-    <script src="sync.js?v=20261118d"></script>
+    <script src="words.js?v=20261118e"></script>
+    <script src="bank-select.js?v=20261118e"></script>
+    <script src="parser.js?v=20261118e"></script>
+    <script src="quiz.js?v=20261118e"></script>
+    <script src="students.js?v=20261118e"></script>
+    <script src="sync.js?v=20261118e"></script>
     <script>
       (function () {
         'use strict';
@@ -2714,6 +2714,30 @@
           var min = Math.min.apply(null, counts);
           var max = Math.max.apply(null, counts);
           if (!min || min !== max) return null;
+
+          function shapeOf(text) {
+            var out = [];
+            var pendingGap = false;
+            String(text).split('').forEach(function (ch) {
+              if (/[A-Za-z]/.test(ch)) {
+                if (pendingGap && out.length) out.push(' ');
+                pendingGap = false;
+                out.push('L');
+              } else if (/\s/.test(ch)) {
+                pendingGap = true;
+              } else {
+                if (pendingGap && out.length) out.push(' ');
+                pendingGap = false;
+                out.push(ch);
+              }
+            });
+            return out.join('');
+          }
+
+          var shape = shapeOf(answers[0]);
+          for (var s = 1; s < answers.length; s += 1) {
+            if (shapeOf(answers[s]) !== shape) return null;
+          }
 
           var base = String(answers[0]);
           var tokens = [];

@@ -14,21 +14,40 @@ test('内置词库包含 6 册 48 个单元', () => {
   );
 });
 
-test('词条总数为 2161，且单元 id 唯一', () => {
+test('词条总数为 2168，且单元 id 唯一', () => {
   const total = bank.units.reduce((n, u) => n + u.words.length, 0);
-  assert.equal(total, 2161);
+  assert.equal(total, 2168);
   assert.equal(new Set(bank.units.map((u) => u.id)).size, bank.units.length);
 });
 
 test('每个词条都有英文和中文', () => {
   const bad = [];
   bank.units.forEach((u) => {
-    u.words.forEach(([en, zh]) => {
+    u.words.forEach((word) => {
+      const [en, zh] = word;
       if (!en || !/[A-Za-z]/.test(en)) bad.push([u.id, en, zh]);
       if (!zh || !/[\u4e00-\u9fff]/.test(zh)) bad.push([u.id, en, zh]);
+      if (word.length > 3) bad.push([u.id, '词条格式过长', word]);
     });
   });
   assert.deepEqual(bad, []);
+});
+
+test('多写法词条带有可选答案', () => {
+  const multi = [];
+  bank.units.forEach((u) => {
+    u.words.forEach((word) => {
+      if (word.length === 3) multi.push({ unit: u.id, en: word[0], answers: word[2] });
+    });
+  });
+  assert.equal(multi.length, 10);
+  multi.forEach((item) => {
+    assert.ok(Array.isArray(item.answers) && item.answers.length >= 2, item.en);
+    assert.equal(new Set(item.answers.map((a) => a.toLowerCase())).size, item.answers.length);
+    item.answers.forEach((a) => assert.match(a, /[A-Za-z]/));
+  });
+  const lot = multi.find((m) => m.en === 'a lot of / lots of');
+  assert.deepEqual(lot.answers, ['a lot of', 'lots of']);
 });
 
 test('每个单元的册别都能在 books 中找到', () => {

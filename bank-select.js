@@ -53,7 +53,11 @@
         var key = String(w[0]).toLowerCase() + '\u0000' + w[1];
         if (seen[key]) continue;
         seen[key] = true;
-        items.push({ en: w[0], zh: w[1], answers: [w[0]] });
+        items.push({
+          en: w[0],
+          zh: w[1],
+          answers: Array.isArray(w[2]) && w[2].length ? w[2].slice() : [w[0]],
+        });
       }
     });
     return items;

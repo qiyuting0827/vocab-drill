@@ -53,6 +53,25 @@ test('isFull 识别整单元与部分范围', () => {
   assert.equal(S.isFull(units[1], { start: 0, end: 1 }), true);
 });
 
+test('第三项多答案被采用，普通词条仍使用英文本身', () => {
+  const items = S.collectItems(
+    [
+      {
+        id: 'u3',
+        name: 'Unit 3',
+        book: '六上',
+        words: [
+          ['a lot of / lots of', '许多', ['a lot of', 'lots of']],
+          ['apple', '苹果'],
+        ],
+      },
+    ],
+    { u3: true }
+  );
+  assert.deepEqual(items[0].answers, ['a lot of', 'lots of']);
+  assert.deepEqual(items[1].answers, ['apple']);
+});
+
 test('未选中的单元不会进入结果', () => {
   assert.deepEqual(S.collectItems(units, {}), []);
 });
