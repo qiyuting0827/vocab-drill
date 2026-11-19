@@ -4,7 +4,7 @@
 
 纯静态页面，无需安装、无需构建；本地双击即可离线使用。
 
-线上地址：<https://vocab-drill-sync.netlify.app/>（推荐，应用与同步接口同源）；镜像：<https://qiyuting0827.github.io/vocab-drill/>
+线上地址：<https://qiyuting0827.github.io/vocab-drill/>（应用入口）；Netlify 仅提供同步中转：<https://vocab-drill-sync.netlify.app/>
 
 ## 使用
 
@@ -70,7 +70,7 @@ take off 起飞；脱下
 
 实现方式：前端只请求 Netlify Function `/.netlify/functions/sync`，由它转发到 Supabase；数据库表只允许通过两个带同步码的 RPC 读写，不能匿名遍历。同步码为 25 位随机字符，知道同步码的人都能查看和修改对应数据，请勿公开。
 
-部署中转：把本仓库接入 Netlify（`netlify.toml` 已配置好构建命令 `exit 0`、发布目录 `.`、函数目录 `netlify/functions`），站点名使用 `vocab-drill-sync`；数据库结构见 `supabase/schema.sql`。在 Netlify 域名下访问时，客户端自动请求同源 `/.netlify/functions/sync`。
+部署中转：把本仓库接入 Netlify（`netlify.toml` 已配置好构建命令 `exit 0`、发布目录 `netlify/relay`、函数目录 `netlify/functions`），站点名使用 `vocab-drill-sync`；数据库结构见 `supabase/schema.sql`。Netlify 根路径只显示“同步服务运行中”的占位页，不部署练习应用；同步接口为 `/.netlify/functions/sync`。
 
 ## 数据备份与恢复
 

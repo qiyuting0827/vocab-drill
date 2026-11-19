@@ -1,4 +1,4 @@
 [build]
   command = "exit 0"
-  publish = "."
+  publish = "netlify/relay"
   functions = "netlify/functions"
