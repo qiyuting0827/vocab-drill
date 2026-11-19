@@ -3,6 +3,10 @@ name: Trigger Netlify deploy
 on:
   push:
     branches: [main]
+    paths:
+      - 'netlify/functions/**'
+      - 'netlify/relay/**'
+      - 'netlify.toml'
   workflow_dispatch:
 
 jobs:
