@@ -17,5 +17,11 @@ jobs:
             echo "NETLIFY_BUILD_HOOK 未配置，跳过。"
             exit 0
           fi
-          curl -fsS -X POST "$NETLIFY_BUILD_HOOK"
+          status=$(curl -sS -o /tmp/netlify-hook.out -w "%{http_code}" \
+            -X POST -H "Content-Type: application/json" -d '{}' "$NETLIFY_BUILD_HOOK")
+          echo "Netlify build hook HTTP $status"
+          if [ "$status" -lt 200 ] || [ "$status" -ge 300 ]; then
+            echo "Netlify 构建触发失败。"
+            exit 1
+          fi
           echo "Netlify 构建已触发。"
