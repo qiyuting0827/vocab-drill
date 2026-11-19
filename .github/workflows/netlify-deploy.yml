@@ -1,0 +1,21 @@
+name: Trigger Netlify deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Netlify build hook
+        env:
+          NETLIFY_BUILD_HOOK: ${{ secrets.NETLIFY_BUILD_HOOK }}
+        run: |
+          if [ -z "$NETLIFY_BUILD_HOOK" ]; then
+            echo "NETLIFY_BUILD_HOOK 未配置，跳过。"
+            exit 0
+          fi
+          curl -fsS -X POST "$NETLIFY_BUILD_HOOK"
+          echo "Netlify 构建已触发。"
