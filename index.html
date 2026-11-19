@@ -579,6 +579,17 @@
         gap: 6px;
         justify-content: center;
       }
+      .kb-letters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        justify-content: center;
+      }
+      .kb-letters .kb-key {
+        flex: 0 0 auto;
+        min-width: 38px;
+        padding: 0 9px;
+      }
       .kb-key {
         flex: 1 1 0;
         min-width: 0;
@@ -633,6 +644,13 @@
         }
         .kb-row {
           gap: 4px;
+        }
+        .kb-letters {
+          gap: 5px;
+        }
+        .kb-letters .kb-key {
+          min-width: 34px;
+          padding: 0 7px;
         }
         .kb-key {
           height: 40px;
@@ -1452,51 +1470,19 @@
             aria-label="英文答案，每个字母一个格子"
           ></div>
           <div class="keyboard" id="keyboard" role="group" aria-label="内置英文键盘">
+            <div class="kb-letters" id="kbLetters"></div>
             <div class="kb-row">
-              <button type="button" class="kb-key" data-char="q">q</button>
-              <button type="button" class="kb-key" data-char="w">w</button>
-              <button type="button" class="kb-key" data-char="e">e</button>
-              <button type="button" class="kb-key" data-char="r">r</button>
-              <button type="button" class="kb-key" data-char="t">t</button>
-              <button type="button" class="kb-key" data-char="y">y</button>
-              <button type="button" class="kb-key" data-char="u">u</button>
-              <button type="button" class="kb-key" data-char="i">i</button>
-              <button type="button" class="kb-key" data-char="o">o</button>
-              <button type="button" class="kb-key" data-char="p">p</button>
-            </div>
-            <div class="kb-row">
-              <button type="button" class="kb-key" data-char="a">a</button>
-              <button type="button" class="kb-key" data-char="s">s</button>
-              <button type="button" class="kb-key" data-char="d">d</button>
-              <button type="button" class="kb-key" data-char="f">f</button>
-              <button type="button" class="kb-key" data-char="g">g</button>
-              <button type="button" class="kb-key" data-char="h">h</button>
-              <button type="button" class="kb-key" data-char="j">j</button>
-              <button type="button" class="kb-key" data-char="k">k</button>
-              <button type="button" class="kb-key" data-char="l">l</button>
-            </div>
-            <div class="kb-row">
-              <button type="button" class="kb-key" data-char="z">z</button>
-              <button type="button" class="kb-key" data-char="x">x</button>
-              <button type="button" class="kb-key" data-char="c">c</button>
-              <button type="button" class="kb-key" data-char="v">v</button>
-              <button type="button" class="kb-key" data-char="b">b</button>
-              <button type="button" class="kb-key" data-char="n">n</button>
-              <button type="button" class="kb-key" data-char="m">m</button>
-              <button
-                type="button"
-                class="kb-key kb-fn"
-                id="kbBackspace"
-                aria-label="退格"
-              >
-                ⌫
+              <button type="button" class="kb-key kb-fn" id="kbApos" data-char="'">
+                '
               </button>
-            </div>
-            <div class="kb-row">
-              <button type="button" class="kb-key kb-fn" id="kbApos" data-char="'">'</button>
-              <button type="button" class="kb-key kb-fn" id="kbHyphen" data-char="-">-</button>
-              <button type="button" class="kb-key kb-space" id="kbSpace" data-char=" ">
+              <button type="button" class="kb-key kb-fn" id="kbHyphen" data-char="-">
+                -
+              </button>
+              <button class="kb-key kb-space" id="kbSpace" data-char=" " type="button">
                 空格
+              </button>
+              <button type="button" class="kb-key kb-fn" id="kbBackspace" aria-label="退格">
+                ⌫
               </button>
               <button type="button" class="kb-key kb-enter" id="kbEnter">
                 确认
@@ -2680,11 +2666,48 @@
           $('kbEnter').textContent = '确认';
           setKeyboardEnabled(true);
           renderAnswerField(item);
+          renderKeyboard(item);
         }
 
         function setKeyboardEnabled(enabled) {
           var keys = $('keyboard').querySelectorAll('.kb-key');
           for (var i = 0; i < keys.length; i++) keys[i].disabled = !enabled;
+        }
+
+        function renderKeyboard(item) {
+          var answers =
+            item && item.answers && item.answers.length
+              ? item.answers
+              : [item && item.en ? item.en : ''];
+          var used = Object.create(null);
+          answers.forEach(function (answer) {
+            String(answer)
+              .toLowerCase()
+              .replace(/[^a-z]/g, '')
+              .split('')
+              .forEach(function (ch) {
+                used[ch] = true;
+              });
+          });
+
+          var letters = Object.keys(used);
+          var pool = 'abcdefghijklmnopqrstuvwxyz'.split('').filter(function (ch) {
+            return !used[ch];
+          });
+          Q.shuffle(pool);
+          var keys = letters.concat(pool.slice(0, 4));
+          Q.shuffle(keys);
+
+          var box = $('kbLetters');
+          box.innerHTML = '';
+          keys.forEach(function (ch) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'kb-key';
+            btn.setAttribute('data-char', ch);
+            btn.textContent = ch;
+            box.appendChild(btn);
+          });
         }
 
         function clearAnswerHint() {
