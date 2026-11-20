@@ -100,13 +100,19 @@ test('合并错题：同一词以较新的 lastAt 为准，时间相同取较大
 test('拉取：返回负载与版本；空响应返回 null', async () => {
   const calls = [];
   const fetchImpl = (url, opts) => {
-    calls.push({ url, body: JSON.parse(opts.body) });
+    calls.push({ url, body: JSON.parse(opts.body), headers: opts.headers });
     return reply({ payload: { students: ['张三'] }, revision: 2, updatedAt: 'now' });
   };
   const result = await S.pull('abcdefghijklmnop', fetchImpl);
   assert.equal(result.revision, 2);
   assert.deepEqual(result.payload.students, ['张三']);
-  assert.deepEqual(calls[0].body, { action: 'get', code: 'abcdefghijklmnop' });
+  assert.match(calls[0].url, /\/\?p=%2Frest%2Fv1%2Frpc%2Fvocab_sync_get$/);
+  assert.match(calls[0].headers.apikey, /^sb_publishable_/);
+  assert.equal(
+    calls[0].headers.Authorization,
+    'Bearer ' + calls[0].headers.apikey
+  );
+  assert.deepEqual(calls[0].body, { p_code: 'abcdefghijklmnop' });
 
   const empty = await S.pull('abcdefghijklmnop', () => reply(null));
   assert.equal(empty, null);
@@ -115,9 +121,13 @@ test('拉取：返回负载与版本；空响应返回 null', async () => {
 test('上传：提交 revision，冲突可识别', async () => {
   const fetchImpl = (url, opts) => {
     const body = JSON.parse(opts.body);
-    assert.equal(body.action, 'put');
-    assert.equal(body.revision, 3);
-    return reply({ payload: body.payload, revision: 4, updatedAt: 'now' });
+    assert.match(url, /vocab_sync_put$/);
+    assert.deepEqual(body, {
+      p_code: 'abcdefghijklmnop',
+      p_payload: { students: [] },
+      p_revision: 3,
+    });
+    return reply({ payload: body.p_payload, revision: 4, updatedAt: 'now' });
   };
   const result = await S.push('abcdefghijklmnop', { students: [] }, 3, fetchImpl);
   assert.equal(result.revision, 4);

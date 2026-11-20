@@ -1,7 +1,7 @@
 /*
  * 单词默写 · 云同步客户端
- * 前端只与 Cloudflare Pages Function (/api/sync) 通信，由它转发到 Supabase。
- * 同步码是唯一凭据，长度 26 位，随机生成。
+ * 前端只与 lz-sync（Cloudflare Pages 上的 Supabase 代理）通信，由它转发到 Supabase。
+ * 同步码是唯一凭据，长度 25 位，随机生成。
  */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) module.exports = factory();
@@ -9,7 +9,8 @@
 })(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
-  var DEFAULT_ENDPOINT = 'https://vocab-drill-sync.netlify.app/.netlify/functions/sync';
+  var DEFAULT_ENDPOINT = 'https://lz-sync.pages.dev/';
+  var SUPABASE_KEY = 'sb_publishable_XSUF6UfFcymamNqBdJwWkQ_YPieFolG';
   var ALPHABET = 'abcdefghjkmnpqrstuvwxyz23456789';
   var MAX_HISTORY = 50;
 
@@ -243,7 +244,7 @@
     };
   }
 
-  function request(body, fetchImpl) {
+  function rpc(name, body, fetchImpl) {
     var f = fetchImpl || (typeof fetch !== 'undefined' ? fetch : null);
     if (!f) return Promise.reject(new Error('浏览器不支持联网'));
     var controller =
@@ -253,10 +254,17 @@
           controller.abort();
         }, 15000)
       : null;
+    var base = resolveEndpoint().replace(/\/+$/, '');
+    var url =
+      base + '/?p=' + encodeURIComponent('/rest/v1/rpc/' + name);
 
-    return f(resolveEndpoint(), {
+    return f(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: SUPABASE_KEY,
+        Authorization: 'Bearer ' + SUPABASE_KEY,
+      },
       body: JSON.stringify(body),
       signal: controller ? controller.signal : undefined,
     }).then(
@@ -291,7 +299,7 @@
 
   function pull(code, fetchImpl) {
     var clean = normalizeCode(code);
-    return request({ action: 'get', code: clean }, fetchImpl).then(function (data) {
+    return rpc('vocab_sync_get', { p_code: clean }, fetchImpl).then(function (data) {
       if (!data || !data.payload) return null;
       return {
         payload: normalizePayload(data.payload),
@@ -303,8 +311,9 @@
 
   function push(code, payload, revision, fetchImpl) {
     var clean = normalizeCode(code);
-    return request(
-      { action: 'put', code: clean, payload: payload, revision: revision },
+    return rpc(
+      'vocab_sync_put',
+      { p_code: clean, p_payload: payload, p_revision: revision },
       fetchImpl
     ).then(function (data) {
       return {
