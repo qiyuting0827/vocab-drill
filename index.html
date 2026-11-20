@@ -1257,6 +1257,59 @@
           gap: 3px;
         }
       }
+      /* 练习专注模式：隐藏无关区域，放大键盘 */
+      body.practice-mode .topbar,
+      body.practice-mode .maker-bar,
+      body.practice-mode .sync-bar {
+        display: none;
+      }
+      body.practice-mode .app {
+        padding-top: 10px;
+      }
+      body.practice-mode .prompt-card {
+        padding: 16px 14px;
+      }
+      .keyboard {
+        gap: 10px;
+      }
+      .kb-letters {
+        gap: 8px;
+      }
+      .kb-letters .kb-key {
+        min-width: 46px;
+        height: 54px;
+        padding: 0 12px;
+        font-size: 20px;
+        border-radius: 12px;
+      }
+      .kb-row {
+        gap: 8px;
+      }
+      .kb-key {
+        height: 52px;
+        font-size: 18px;
+      }
+      .kb-space {
+        min-width: 130px;
+      }
+      .kb-enter {
+        max-width: 150px;
+      }
+      @media (max-width: 520px) {
+        .kb-letters .kb-key {
+          min-width: 40px;
+          height: 50px;
+          padding: 0 9px;
+          font-size: 19px;
+        }
+        .kb-key {
+          height: 50px;
+          font-size: 17px;
+        }
+        .kb-space {
+          min-width: 100px;
+        }
+      }
     </style>
   </head>
   <body>
@@ -1724,6 +1777,7 @@
 
         function showView(name) {
           currentView = name;
+          document.body.classList.toggle('practice-mode', name === 'practice');
           var map = {
             setup: 'viewSetup',
             practice: 'viewPractice',
