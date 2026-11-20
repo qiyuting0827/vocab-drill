@@ -1502,6 +1502,7 @@
           </span>
           <span>
             <span id="modeText">全部单词</span>
+            <button class="btn ghost" id="btnHome" type="button">返回首页</button>
             <button class="btn ghost" id="btnQuit" type="button">退出</button>
           </span>
         </div>
@@ -1581,6 +1582,7 @@
         <div class="row actions">
           <button class="btn primary" id="btnRetryWrong" type="button">再练错词</button>
           <button class="btn secondary" id="btnRestart" type="button">重新开始</button>
+          <button class="btn secondary" id="btnHomeFromResult" type="button">返回首页</button>
         </div>
         <div class="row actions" style="margin-top: 10px">
           <button class="btn link" id="btnHistoryFromResult" type="button">
@@ -3533,6 +3535,28 @@
           }
           clearAutoNext();
           session = null;
+          refreshPreview();
+          showView('setup');
+        });
+
+        $('btnHome').addEventListener('click', function () {
+          if (
+            session &&
+            session.results.length &&
+            !window.confirm('返回首页？本轮的答题记录不会保存。')
+          ) {
+            return;
+          }
+          clearAutoNext();
+          session = null;
+          refreshPreview();
+          showView('setup');
+        });
+
+        $('btnHomeFromResult').addEventListener('click', function () {
+          clearAutoNext();
+          session = null;
+          summary = null;
           refreshPreview();
           showView('setup');
         });

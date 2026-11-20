@@ -1,7 +1,7 @@
 /* 单词默写 · Service Worker
  * 应用壳离线缓存；同步接口是跨域 POST，完全不拦截。
  */
-var VERSION = '20261120a';
+var VERSION = '20261120b';
 var CACHE = 'vocab-drill-' + VERSION;
 var SHELL = [
   './',
