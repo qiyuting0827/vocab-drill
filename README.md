@@ -115,6 +115,16 @@ location.reload();
 | `netlify.toml` | Netlify 构建与函数目录配置 |
 | `*.test.js` | Node 内置测试 |
 
+## 安装到手机（PWA）
+
+用手机浏览器打开线上地址后，可通过「添加到主屏幕 / 安装应用」安装为独立窗口；首次打开后 Service Worker 会缓存应用，断网也能继续默写（云同步需要联网）。
+
+- `manifest.webmanifest`：应用名称、图标、主题色、独立窗口
+- `sw.js`：离线缓存应用壳，联网时自动更新
+- `icons/`：192 / 512 / Apple Touch 图标
+
+安装入口与浏览器共用同一份 localStorage；换设备仍需通过同步码恢复。
+
 ## 测试
 
 ```bash
